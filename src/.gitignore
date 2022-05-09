@@ -22,3 +22,9 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+# Extend
+.settings
+.factorypath
+.metadata
+.idea
+*.iml
