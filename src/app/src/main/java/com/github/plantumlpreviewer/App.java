@@ -3,12 +3,22 @@
  */
 package com.github.plantumlpreviewer;
 
+import javax.swing.SwingUtilities;
+
+/**
+ * Main application
+ *
+ * @author Tran Duc Binh
+ * @since 1.0.0
+ *
+ */
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        SwingUtilities.invokeLater(() -> {
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.setVisible(true);
+        });
     }
+
 }
