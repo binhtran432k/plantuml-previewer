@@ -27,7 +27,13 @@ public class MainWindow extends JFrame {
         setSize(800, 600);
         setLocationRelativeTo(null); // always startup center
 
+        initMenubar();
+
         switchToPanel(imagePanel);
+    }
+
+    private void initMenubar() {
+        setJMenuBar(new MyMenuBar());
     }
 
     private void switchToPanel(JPanel toPanel) {
