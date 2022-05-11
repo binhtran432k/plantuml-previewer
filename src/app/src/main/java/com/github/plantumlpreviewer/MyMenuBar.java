@@ -5,7 +5,6 @@ import java.awt.Color;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.event.MenuListener;
 
 /**
  * Menu bar for application

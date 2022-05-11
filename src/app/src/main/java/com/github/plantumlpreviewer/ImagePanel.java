@@ -11,6 +11,7 @@ import javax.swing.JPanel;
  * Image Panel of main window
  *
  * @author Tran Duc Binh
+ * @since 1.0.0
  *
  */
 public class ImagePanel extends JPanel {
