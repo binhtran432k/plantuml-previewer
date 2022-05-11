@@ -1,4 +1,4 @@
-package com.github.plantumlpreviewer;
+package com.github.binhtran432k.plantumlpreviewer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

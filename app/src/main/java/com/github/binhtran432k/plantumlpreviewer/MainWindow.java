@@ -1,4 +1,4 @@
-package com.github.plantumlpreviewer;
+package com.github.binhtran432k.plantumlpreviewer;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
