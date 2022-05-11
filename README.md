@@ -1,9 +1,21 @@
 # PlantUML Previewer for Neovim
 
-## TODO
+## Goal
 
-- [ ] Design UI
-- [ ] Minimal Prototype
-- [ ] Add support for neovim
-- [ ] Full feature
+- [x] Main panel
+- [x] Status panel
+- [x] Menu bar
+- [ ] PlantUML image viewer
+- [ ] Image zoom
+- [ ] Image manipulation
+- [ ] Keybindings
+- [ ] Keybindings Help
+- [ ] About
+- [ ] Open File Feature
+- [ ] Export File Feature
+- [ ] PlantUML server support
+- [ ] External PlantUML source support
+- [ ] User Preferences support
+- [ ] Colorschemes support
 - [ ] Documentation
+- [ ] Svg Preview support
