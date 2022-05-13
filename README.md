@@ -1,6 +1,6 @@
-# PlantUML Previewer for Neovim
+# PlantUML Previewer
 
-## Goal
+## TODO
 
 - [x] Main panel
 - [x] Status panel
