@@ -5,9 +5,9 @@
 - [x] Main panel
 - [x] Status panel
 - [x] Menu bar
-- [ ] PlantUML image viewer
-- [ ] Image zoom
-- [ ] Image manipulation
+- [x] PlantUML image viewer
+- [x] Image zoom
+- [x] Image manipulation
 - [ ] Keybindings
 - [ ] Keybindings Help
 - [ ] About
