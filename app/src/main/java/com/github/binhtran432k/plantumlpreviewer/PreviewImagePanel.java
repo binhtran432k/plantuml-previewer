@@ -51,8 +51,8 @@ public class PreviewImagePanel extends JPanel {
         private final int INCREMENT_UNIT = 30;
 
         private int zoom = 100;
-        private boolean isBestFit = true;
-        private boolean isWidthFit = true;
+        private boolean isBestFit = false;
+        private boolean isWidthFit = false;
         private JPanel imageView = new JPanel(new GridBagLayout());
         private JLabel imageWrapper = new JLabel();
         private Image image;
@@ -62,8 +62,15 @@ public class PreviewImagePanel extends JPanel {
             initUI();
         }
 
-        public void setImage(Image image) {
+        public void updateImage(Image image) {
             this.image = image;
+
+            imagePanel.refreshImage();
+
+            SwingUtilities.invokeLater(() -> {
+                imagePanel.moveImageToCenter();
+                repaint();
+            });
         }
 
         public int getZoom() {
@@ -85,8 +92,6 @@ public class PreviewImagePanel extends JPanel {
 
             // Remove all defalt mouse wheel
             Arrays.stream(getMouseWheelListeners()).forEach(l -> removeMouseWheelListener(l));
-            SwingUtilities.invokeLater(() -> {
-            });
 
             addMouseListener(this);
             addMouseMotionListener(this);
@@ -360,7 +365,7 @@ public class PreviewImagePanel extends JPanel {
         add(imagePanel, BorderLayout.CENTER);
         repaint();
 
-        SwingUtilities.invokeLater(() -> {
+        new Thread(() -> {
             try {
                 ByteArrayOutputStream png = new ByteArrayOutputStream();
                 String source = Files.asCharSource(file, StandardCharsets.UTF_8).read();
@@ -373,19 +378,12 @@ public class PreviewImagePanel extends JPanel {
                 setStatusImageLabel(generateHtmlLabel());
 
                 image = ImageIO.read(new ByteArrayInputStream(png.toByteArray()));
-                imagePanel.setImage(image);
+                imagePanel.updateImage(image);
             } catch (IOException e) {
-                imagePanel.setImage(null);
+                imagePanel.updateImage(null);
                 e.printStackTrace();
             }
-
-            imagePanel.refreshImage();
-
-            SwingUtilities.invokeLater(() -> {
-                imagePanel.moveImageToCenter();
-                repaint();
-            });
-        });
+        }).start();
     }
 
 }
