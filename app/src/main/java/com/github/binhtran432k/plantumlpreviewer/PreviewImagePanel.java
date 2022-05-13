@@ -304,8 +304,11 @@ public class PreviewImagePanel extends JPanel {
     private String generateImageStatusStr() {
         String pageNumber = String.format("%d/%d", currentPage, maxPage);
         String name = String.format("%s %s", file.getName(), currentImageDescription);
+        String source = String.format("- %s -", sourceType.toString());
+        String zoom = String.format("[%d%%]", imagePanel.getZoom());
+        String padding = "   ";
 
-        return String.format("%s  - %s -  %s   [%d%%]", pageNumber, sourceType.toString(), name, imagePanel.getZoom());
+        return String.join(padding, pageNumber, source, name, zoom);
     }
 
     private void initUI() {
