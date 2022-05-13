@@ -51,6 +51,7 @@ public class PreviewImagePanel extends JPanel {
         private final int INCREMENT_UNIT = 30;
 
         private int zoom = 100;
+        private boolean isBestFit = true;
         private boolean isWidthFit = true;
         private JPanel imageView = new JPanel(new GridBagLayout());
         private JLabel imageWrapper = new JLabel();
@@ -220,14 +221,28 @@ public class PreviewImagePanel extends JPanel {
                 return null;
             }
 
-            int width;
-            if (isWidthFit) {
+            int width = -1;
+            int height = -1;
+
+            if (isBestFit) {
+                int imageWidth = image.getWidth(null);
+                int imageHeight = image.getHeight(null);
+                width = viewport.getWidth() - 20;
+                height = viewport.getHeight() - 20;
+                int scaleWidth = imageWidth * height / imageHeight;
+                int scaleHeight = imageHeight * width / imageWidth;
+                if (scaleHeight > height) {
+                    width = -1;
+                } else if (scaleWidth > width) {
+                    height = -1;
+                }
+            } else if (isWidthFit) {
                 width = viewport.getWidth() - 20;
             } else {
                 width = image.getWidth(null) * zoom / 100;
             }
 
-            return image.getScaledInstance(width, -1, Image.SCALE_SMOOTH);
+            return image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         }
 
         private boolean isScrollable() {
