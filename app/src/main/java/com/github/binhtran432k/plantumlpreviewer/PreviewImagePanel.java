@@ -201,8 +201,15 @@ public class PreviewImagePanel extends JPanel {
         public void componentShown(ComponentEvent e) {
         }
 
-        public void refreshImage() {
-            imageWrapper.setIcon(new ImageIcon(generateImage()));
+        private void refreshImage() {
+            Image scaledImage = generateImage();
+            if (scaledImage != null) {
+                imageWrapper.setText(null);
+                imageWrapper.setIcon(new ImageIcon(scaledImage));
+            } else {
+                imageWrapper.setText("...(PENDING)...");
+                imageWrapper.setIcon(null);
+            }
         }
 
         private void refreshZoom(boolean isZoomOut) {
