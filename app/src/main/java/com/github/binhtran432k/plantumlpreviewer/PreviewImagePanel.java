@@ -6,6 +6,8 @@ import java.awt.Cursor;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -44,11 +46,12 @@ import net.sourceforge.plantuml.core.DiagramDescription;
  */
 public class PreviewImagePanel extends JPanel {
 
-    private class ImagePanel extends JScrollPane implements MouseInputListener, MouseWheelListener {
+    private class ImagePanel extends JScrollPane implements MouseInputListener, MouseWheelListener, ComponentListener {
         private final int ZOOM_UNIT = 10;
         private final int INCREMENT_UNIT = 30;
 
         private int zoom = 100;
+        private boolean isWidthFit = true;
         private JPanel imageView = new JPanel(new GridBagLayout());
         private JLabel imageWrapper = new JLabel();
         private Image image;
@@ -87,6 +90,7 @@ public class PreviewImagePanel extends JPanel {
             addMouseListener(this);
             addMouseMotionListener(this);
             addMouseWheelListener(this);
+            addComponentListener(this);
         }
 
         @Override
@@ -174,6 +178,23 @@ public class PreviewImagePanel extends JPanel {
             }
         }
 
+        @Override
+        public void componentHidden(ComponentEvent e) {
+        }
+
+        @Override
+        public void componentMoved(ComponentEvent e) {
+        }
+
+        @Override
+        public void componentResized(ComponentEvent e) {
+            refreshImage();
+        }
+
+        @Override
+        public void componentShown(ComponentEvent e) {
+        }
+
         public void refreshImage() {
             imageWrapper.setIcon(new ImageIcon(generateImage()));
         }
@@ -199,8 +220,14 @@ public class PreviewImagePanel extends JPanel {
                 return null;
             }
 
-            return image.getScaledInstance(image.getWidth(null) * zoom / 100, -1,
-                    Image.SCALE_SMOOTH);
+            int width;
+            if (isWidthFit) {
+                width = viewport.getWidth() - 20;
+            } else {
+                width = image.getWidth(null) * zoom / 100;
+            }
+
+            return image.getScaledInstance(width, -1, Image.SCALE_SMOOTH);
         }
 
         private boolean isScrollable() {
