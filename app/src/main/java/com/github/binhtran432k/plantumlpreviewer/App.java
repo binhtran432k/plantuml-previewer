@@ -4,6 +4,8 @@
 package com.github.binhtran432k.plantumlpreviewer;
 
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * Main application
@@ -16,7 +18,13 @@ public class App {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            MainWindow mainWindow = new MainWindow();
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                    | UnsupportedLookAndFeelException ex) {
+                ex.printStackTrace();
+            }
+            MainWindow mainWindow = new MainWindow(args);
             mainWindow.setVisible(true);
         });
     }

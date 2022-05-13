@@ -14,10 +14,14 @@ import javax.swing.JPanel;
  */
 public class MainWindow extends JFrame {
 
-    private ImagePanel imagePanel = new ImagePanel();
+    private PreviewImagePanel imagePanel;
+    private MyOption option;
     private JPanel currentPanel;
 
-    public MainWindow() {
+    public MainWindow(String... args) {
+        option = new MyOption(args);
+        imagePanel = new PreviewImagePanel(option.getFile());
+
         initUI();
     }
 
