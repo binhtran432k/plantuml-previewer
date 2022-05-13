@@ -351,7 +351,8 @@ public class PreviewImagePanel extends JPanel {
                 String source = Files.asCharSource(file, StandardCharsets.UTF_8).read();
 
                 SourceStringReader reader = new SourceStringReader(source);
-                DiagramDescription description = reader.outputImage(png, currentPage - 1, new FileFormatOption(FileFormat.PNG));
+                DiagramDescription description = reader.outputImage(png, currentPage - 1,
+                        new FileFormatOption(FileFormat.PNG));
                 currentImageDescription = description.toString();
                 statusStr = generateImageStatusStr();
                 setStatusImageLabel(generateHtmlLabel());
