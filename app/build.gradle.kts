@@ -29,7 +29,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass.set("com.github.binhtran432k.plantumlpreviewer.App")
+    mainClass.set("com.github.binhtran432k.plantumlpreviewer.Runner")
 }
 
 tasks.named<Test>("test") {

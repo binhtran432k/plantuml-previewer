@@ -1,4 +1,4 @@
-package com.github.binhtran432k.plantumlpreviewer;
+package com.github.binhtran432k.plantumlpreviewer.gui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,6 +29,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputListener;
 
+import com.github.binhtran432k.plantumlpreviewer.gui.model.SourceType;
 import com.google.common.io.Files;
 
 import net.sourceforge.plantuml.FileFormat;

@@ -1,4 +1,4 @@
-package com.github.binhtran432k.plantumlpreviewer;
+package com.github.binhtran432k.plantumlpreviewer.gui.model;
 
 /**
  * SourceType

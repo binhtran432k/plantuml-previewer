@@ -1,4 +1,6 @@
-package com.github.binhtran432k.plantumlpreviewer;
+package com.github.binhtran432k.plantumlpreviewer.gui.view;
+
+import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,12 +17,10 @@ import javax.swing.JPanel;
 public class MainWindow extends JFrame {
 
     private PreviewImagePanel imagePanel;
-    private MyOption option;
     private JPanel currentPanel;
 
-    public MainWindow(String... args) {
-        option = new MyOption(args);
-        imagePanel = new PreviewImagePanel(option.getFile());
+    public MainWindow(File file) {
+        imagePanel = new PreviewImagePanel(file);
 
         initUI();
     }
