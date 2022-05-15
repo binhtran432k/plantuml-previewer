@@ -10,8 +10,15 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.function.Consumer;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,10 +28,16 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputListener;
 
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.SourceStringReader;
+import net.sourceforge.plantuml.core.DiagramDescription;
+
 class ImagePanel extends JScrollPane implements MouseInputListener, MouseWheelListener, ComponentListener {
     private final int ZOOM_UNIT = 10;
     private final int INCREMENT_UNIT = 30;
 
+    private int maxPage = 1;
     private int zoom = 100;
     private boolean isBestFit = false;
     private boolean isWidthFit = false;
@@ -37,19 +50,40 @@ class ImagePanel extends JScrollPane implements MouseInputListener, MouseWheelLi
         initUI();
     }
 
-    public void updateImage(Image image) {
-        this.image = image;
-
-        refreshImage();
-
-        SwingUtilities.invokeLater(() -> {
-            moveImageToCenter();
-            repaint();
-        });
-    }
-
     public int getZoom() {
         return zoom;
+    }
+
+    public int getMaxPage() {
+        return maxPage;
+    }
+
+    public void updateImage(File file, int index, Consumer<String> callback) {
+        new Thread(() -> {
+            try {
+                ByteArrayOutputStream png = new ByteArrayOutputStream();
+                String source = Files.readString(file.toPath());
+
+                SourceStringReader reader = new SourceStringReader(source);
+
+                DiagramDescription description = reader.outputImage(png, index,
+                        new FileFormatOption(FileFormat.PNG));
+
+                maxPage = calNumOfImages(reader);
+
+                callback.accept(description.toString());
+
+                image = ImageIO.read(new ByteArrayInputStream(png.toByteArray()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            refreshImage();
+        }).start();
+    }
+
+    public int calNumOfImages(SourceStringReader reader) {
+        return reader.getBlocks().stream().mapToInt(b -> b.getDiagram().getNbImages()).sum();
     }
 
     public void initUI() {
@@ -178,6 +212,7 @@ class ImagePanel extends JScrollPane implements MouseInputListener, MouseWheelLi
 
     private void refreshImage() {
         Image scaledImage = generateImage();
+
         if (scaledImage != null) {
             imageWrapper.setText(null);
             imageWrapper.setIcon(new ImageIcon(scaledImage));
@@ -185,6 +220,11 @@ class ImagePanel extends JScrollPane implements MouseInputListener, MouseWheelLi
             imageWrapper.setText("...(PENDING)...");
             imageWrapper.setIcon(null);
         }
+
+        SwingUtilities.invokeLater(() -> {
+            moveImageToCenter();
+            repaint();
+        });
     }
 
     private void refreshZoom(boolean isZoomOut) {
