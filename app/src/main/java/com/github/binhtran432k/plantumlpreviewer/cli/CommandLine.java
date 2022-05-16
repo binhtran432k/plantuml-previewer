@@ -4,6 +4,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.github.binhtran432k.plantumlpreviewer.gui.model.GuiModel;
 import com.github.binhtran432k.plantumlpreviewer.gui.view.MainWindow;
 
 public class CommandLine {
@@ -12,6 +13,7 @@ public class CommandLine {
 
     public CommandLine(String... args) {
         option = new Option(args);
+
         CommandLineType cliType = option.getCliType();
         if (cliType == CommandLineType.HELP) {
             printCommandLineHelp();
@@ -49,13 +51,15 @@ public class CommandLine {
 
     private void runPlantumlGui() {
         SwingUtilities.invokeLater(() -> {
+            GuiModel model = GuiModel.getInstance();
+            model.setOption(option);
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
                     | UnsupportedLookAndFeelException ex) {
                 ex.printStackTrace();
             }
-            MainWindow mainWindow = new MainWindow(option.getFile());
+            MainWindow mainWindow = new MainWindow();
             mainWindow.setVisible(true);
         });
     }

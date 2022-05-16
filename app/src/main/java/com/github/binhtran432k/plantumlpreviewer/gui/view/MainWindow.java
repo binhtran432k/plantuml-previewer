@@ -1,7 +1,5 @@
 package com.github.binhtran432k.plantumlpreviewer.gui.view;
 
-import java.io.File;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -16,11 +14,11 @@ import javax.swing.JPanel;
  */
 public class MainWindow extends JFrame {
 
-    private PreviewImagePanel imagePanel;
+    private NormalPanel imagePanel;
     private JPanel currentPanel;
 
-    public MainWindow(File file) {
-        imagePanel = new PreviewImagePanel(file);
+    public MainWindow() {
+        imagePanel = new NormalPanel();
 
         initUI();
     }

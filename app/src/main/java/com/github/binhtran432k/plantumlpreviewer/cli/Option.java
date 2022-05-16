@@ -2,6 +2,8 @@ package com.github.binhtran432k.plantumlpreviewer.cli;
 
 import java.io.File;
 
+import com.github.binhtran432k.plantumlpreviewer.gui.model.SourceType;
+
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.StringUtils;
@@ -18,9 +20,24 @@ public class Option {
     private File file;
     private FileFormatOption fileFormatOption = new FileFormatOption(FileFormat.PNG);
     private CommandLineType cliType = CommandLineType.PLANTUML;
+    private SourceType sourceType = SourceType.BUILTIN;
 
     public Option(String... args) {
         initOptions(args);
+    }
+
+    /**
+     * @return the sourceType
+     */
+    public SourceType getSourceType() {
+        return sourceType;
+    }
+
+    /**
+     * @param sourceType the sourceType to set
+     */
+    public void setSourceType(SourceType sourceType) {
+        this.sourceType = sourceType;
     }
 
     /**
