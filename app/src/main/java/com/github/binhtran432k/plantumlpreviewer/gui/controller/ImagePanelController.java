@@ -6,6 +6,7 @@ import javax.swing.JViewport;
 
 import com.github.binhtran432k.plantumlpreviewer.gui.model.GuiModel;
 import com.github.binhtran432k.plantumlpreviewer.gui.model.ScrollSizeType;
+import com.github.binhtran432k.plantumlpreviewer.gui.model.ZoomAction;
 
 public class ImagePanelController {
     GuiModel model = GuiModel.getInstance();
@@ -41,27 +42,28 @@ public class ImagePanelController {
     }
 
     public void zoomInImage() {
-        model.setBestFit(false);
-        model.setWidthFit(false);
+        model.setZoomAction(ZoomAction.ZOOMABLE);
         model.zoomImage(true);
     }
 
     public void zoomOutImage() {
-        model.setBestFit(false);
-        model.setWidthFit(false);
+        model.setZoomAction(ZoomAction.ZOOMABLE);
         model.zoomImage(false);
     }
 
     public void zoomBestFitImage() {
-        model.setBestFit(true);
-        model.setWidthFit(false);
-        model.refreshImage();
+        model.setZoomAction(ZoomAction.BEST_FIT);
+        refreshImageZoom();
     }
 
     public void zoomWidthFitImage() {
-        model.setWidthFit(true);
-        model.setBestFit(false);
-        model.refreshImage();
+        model.setZoomAction(ZoomAction.WIDTH_FIT);
+        refreshImageZoom();
+    }
+
+    public void zoomFitImage() {
+        model.setZoomAction(ZoomAction.FIT);
+        refreshImageZoom();
     }
 
     public void scrollLeftHorizontal() {

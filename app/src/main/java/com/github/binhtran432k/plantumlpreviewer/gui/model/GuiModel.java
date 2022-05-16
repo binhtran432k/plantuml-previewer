@@ -34,10 +34,9 @@ public class GuiModel {
     // Data
     private int index = 0;
     private int maxPage = 0;
-    private int zoom = 500;
-    private boolean isViewScroll = true;
-    private boolean isBestFit = false;
-    private boolean isWidthFit = false;
+    private int zoom = 100;
+    private boolean isViewScroll = false;
+    private ZoomAction zoomAction = ZoomAction.FIT;
     private Point holdPoint;
     private Point relativePoint;
     private String currentImageDescription;
@@ -65,6 +64,20 @@ public class GuiModel {
 
     public static GuiModel getInstance() {
         return Loader.INSTANCE;
+    }
+
+    /**
+     * @return the zoomAction
+     */
+    public ZoomAction getZoomAction() {
+        return zoomAction;
+    }
+
+    /**
+     * @param zoomAction the zoomAction to set
+     */
+    public void setZoomAction(ZoomAction zoomAction) {
+        this.zoomAction = zoomAction;
     }
 
     /**
@@ -181,34 +194,6 @@ public class GuiModel {
     }
 
     /**
-     * @return the isBestFit
-     */
-    public boolean isBestFit() {
-        return isBestFit;
-    }
-
-    /**
-     * @param isBestFit the isBestFit to set
-     */
-    public void setBestFit(boolean isBestFit) {
-        this.isBestFit = isBestFit;
-    }
-
-    /**
-     * @return the isWidthFit
-     */
-    public boolean isWidthFit() {
-        return isWidthFit;
-    }
-
-    /**
-     * @param isWidthFit the isWidthFit to set
-     */
-    public void setWidthFit(boolean isWidthFit) {
-        this.isWidthFit = isWidthFit;
-    }
-
-    /**
      * @return the image
      */
     public Image getImage() {
@@ -307,6 +292,14 @@ public class GuiModel {
         this.holdPoint = holdPoint;
     }
 
+    public int getMaxViewX() {
+        return Math.max(imageWrapper.getWidth() - viewport.getWidth(), 0);
+    }
+
+    public int getMaxViewY() {
+        return Math.max(imageWrapper.getHeight() - viewport.getHeight(), 0);
+    }
+
     public void updateAdditionIndex(int addition) {
         int newIndex = index + addition;
 
@@ -341,7 +334,11 @@ public class GuiModel {
 
         relativePoint = genVisiblePoint(point);
 
+        imageView.setVisible(false);
         viewport.setViewPosition(relativePoint);
+        imageView.setVisible(true);
+
+        updateStatus();
     }
 
     public void updateImageToRelative() {
@@ -373,6 +370,7 @@ public class GuiModel {
                 e.printStackTrace();
             }
 
+            refreshZoom();
             refreshImage();
             SwingUtilities.invokeLater(() -> {
                 updateImageToRelative();
@@ -398,6 +396,7 @@ public class GuiModel {
                 e.printStackTrace();
             }
 
+            refreshZoom();
             refreshImage();
             SwingUtilities.invokeLater(() -> {
                 updateImageToRelative();
@@ -410,7 +409,6 @@ public class GuiModel {
     }
 
     public void zoomImage(boolean isZoomIn) {
-        imageView.setVisible(false);
         refreshZoomPosition(isZoomIn);
 
         if (isZoomIn) {
@@ -422,7 +420,6 @@ public class GuiModel {
         refreshZoom();
 
         refreshImage();
-        imageView.setVisible(true);
     }
 
     public void scrollImage(boolean isHorizontal, boolean isUpOrLeft) {
@@ -481,7 +478,7 @@ public class GuiModel {
         int width = -1;
         int height = -1;
 
-        if (isBestFit) {
+        if (zoomAction == ZoomAction.BEST_FIT) {
             int imageWidth = image.getWidth(null);
             int imageHeight = image.getHeight(null);
             width = viewport.getWidth() - 20;
@@ -493,9 +490,11 @@ public class GuiModel {
             } else if (scaleWidth > width) {
                 height = -1;
             }
-        } else if (isWidthFit) {
+        } else if (zoomAction == ZoomAction.WIDTH_FIT) {
             width = viewport.getWidth() - 20;
-        } else {
+        } else if (zoomAction == ZoomAction.FIT) {
+            width = image.getWidth(null);
+        } else if (zoomAction == ZoomAction.ZOOMABLE) {
             width = image.getWidth(null) * zoom / 100;
         }
 
@@ -511,23 +510,19 @@ public class GuiModel {
     }
 
     private Point genVisiblePoint(Point point) {
-        int maxViewX = imageWrapper.getWidth() - viewport.getWidth();
-        int maxViewY = imageWrapper.getHeight() - viewport.getHeight();
+        int maxViewX = getMaxViewX();
+        int maxViewY = getMaxViewY();
 
-        if (isScrollableHorizontal()) {
-            if (point.x < 0) {
-                point.x = 0;
-            } else if (point.x > maxViewX) {
-                point.x = maxViewX;
-            }
+        if (point.x < 0) {
+            point.x = 0;
+        } else if (point.x > maxViewX) {
+            point.x = maxViewX;
         }
 
-        if (isScrollableVertical()) {
-            if (point.y < 0) {
-                point.y = 0;
-            } else if (point.y > maxViewY) {
-                point.y = maxViewY;
-            }
+        if (point.y < 0) {
+            point.y = 0;
+        } else if (point.y > maxViewY) {
+            point.y = maxViewY;
         }
 
         return point;
@@ -567,9 +562,25 @@ public class GuiModel {
         String name = String.format("%s %s", option.getFile().getName(), currentImageDescription);
         String source = String.format("- %s -", option.getSourceType().toString());
         String zoom = String.format("[%d%%]", getZoom());
+        StringBuilder position = new StringBuilder("");
+        if (isScrollable() && relativePoint != null) {
+            int relativeXPercent = getPercent(relativePoint.x, getMaxViewX());
+            int relativeYPercent = getPercent(relativePoint.y, getMaxViewY());
+            position.append(relativeXPercent);
+            position.append(", ");
+            position.append(relativeYPercent);
+        }
         String padding = "   ";
 
-        return String.join(padding, pageNumber, source, name, zoom);
+        return String.join(padding, pageNumber, source, name, zoom, position);
+    }
+
+    private int getPercent(int x, int maxX) {
+        if (maxX == 0) {
+            return 0;
+        }
+
+        return x * 100 / maxX;
     }
 
     private Image generateImage() {

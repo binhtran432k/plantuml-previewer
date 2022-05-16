@@ -89,8 +89,12 @@ public class ImagePanelListener implements MouseInputListener, MouseWheelListene
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_EQUALS && e.isShiftDown()) {
-            controller.zoomInImage();
+        if (e.getKeyCode() == KeyEvent.VK_EQUALS) {
+            if (e.isShiftDown()) {
+                controller.zoomInImage();
+            } else {
+                controller.zoomFitImage();
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_PLUS) {
             controller.zoomInImage();
         } else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
