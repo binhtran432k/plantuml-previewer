@@ -1,3 +1,4 @@
+import org.gradle.jvm.tasks.Jar
 
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
@@ -27,6 +28,15 @@ application {
     // Define the main class for the application.
     mainClass.set("com.github.binhtran432k.plantumlpreviewer.Runner")
 }
+
+tasks.withType<Jar>() {
+    manifest { attributes["Main-Class"] = application.mainClass }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    configurations["compileClasspath"].forEach { file: File -> from(zipTree(file.absoluteFile)) }
+}
+
+tasks.withType<AbstractArchiveTask> { setProperty("archiveBaseName", "plantuml-previewer") }
 
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
