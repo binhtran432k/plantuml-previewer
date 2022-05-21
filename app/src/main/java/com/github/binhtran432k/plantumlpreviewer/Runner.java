@@ -3,7 +3,7 @@
  */
 package com.github.binhtran432k.plantumlpreviewer;
 
-import com.github.binhtran432k.plantumlpreviewer.cli.CommandLine;
+import com.github.binhtran432k.plantumlpreviewer.cli.CommandLineManager;
 
 /**
  * Main application
@@ -15,7 +15,7 @@ import com.github.binhtran432k.plantumlpreviewer.cli.CommandLine;
 public class Runner {
 
     public static void main(String[] args) {
-        new CommandLine(args);
+        new CommandLineManager(args);
     }
 
 }

@@ -4,5 +4,5 @@ public enum ZoomAction {
     BEST_FIT,
     WIDTH_FIT,
     ZOOMABLE,
-    FIT,
+    IMAGE_SIZE,
 }

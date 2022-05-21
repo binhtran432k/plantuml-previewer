@@ -1,17 +1,19 @@
 package com.github.binhtran432k.plantumlpreviewer.cli;
 
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import com.github.binhtran432k.plantumlpreviewer.gui.GuiManager;
 
-import com.github.binhtran432k.plantumlpreviewer.gui.model.GuiModel;
-import com.github.binhtran432k.plantumlpreviewer.gui.view.MainWindow;
+/**
+ * Command line manager of application
+ *
+ * @author Tran Duc Binh
+ * @since 1.0.0
+ *
+ */
+public class CommandLineManager {
 
-public class CommandLine {
+    private Option option;
 
-    Option option;
-
-    public CommandLine(String... args) {
+    public CommandLineManager(String... args) {
         option = new Option(args);
 
         CommandLineType cliType = option.getCliType();
@@ -50,18 +52,7 @@ public class CommandLine {
     }
 
     private void runPlantumlGui() {
-        SwingUtilities.invokeLater(() -> {
-            GuiModel model = GuiModel.getInstance();
-            model.setOption(option);
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-                    | UnsupportedLookAndFeelException ex) {
-                ex.printStackTrace();
-            }
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.setVisible(true);
-        });
+        new GuiManager(option);
     }
 
 }

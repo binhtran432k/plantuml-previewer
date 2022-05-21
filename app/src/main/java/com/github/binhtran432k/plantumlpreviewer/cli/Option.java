@@ -2,11 +2,12 @@ package com.github.binhtran432k.plantumlpreviewer.cli;
 
 import java.io.File;
 
-import com.github.binhtran432k.plantumlpreviewer.gui.model.SourceType;
+import com.github.binhtran432k.plantumlpreviewer.core.PlantUmlFormat;
+import com.github.binhtran432k.plantumlpreviewer.gui.helper.StringHelper;
+import com.github.binhtran432k.plantumlpreviewer.gui.model.ZoomAction;
 
-import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.StringUtils;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Option parser from cli
@@ -15,71 +16,30 @@ import net.sourceforge.plantuml.StringUtils;
  * @since 1.0.0
  *
  */
+@Getter
+@Setter
 public class Option {
 
+    public static final double DEFAULT_ZOOM_IN_FOLD = 1.1;
+    public static final double DEFAULT_ZOOM_OUT_FOLD = 1 / DEFAULT_ZOOM_IN_FOLD;
+    public static final int BORDER_SIZE = 0;
+    public static final int FAST_SPEED_FACTOR = 5;
+    public static final int INCREMENT_UNIT = 30;
+    public static final int PRIMARY_COLOR = 0xe5e5e5;
+    public static final int SECONDARY_COLOR = 0xc1c1c1;
+
+    private boolean isViewMenuBar = false;
+    private boolean isViewScrollBar = false;
+    private double zoom = 1;
+    private int index = 0;
+    private ZoomAction zoomAction = ZoomAction.ZOOMABLE;
+
     private File file;
-    private FileFormatOption fileFormatOption = new FileFormatOption(FileFormat.PNG);
+    private PlantUmlFormat plantUmlFormat = PlantUmlFormat.PNG;
     private CommandLineType cliType = CommandLineType.PLANTUML;
-    private SourceType sourceType = SourceType.BUILTIN;
 
     public Option(String... args) {
         initOptions(args);
-    }
-
-    /**
-     * @return the sourceType
-     */
-    public SourceType getSourceType() {
-        return sourceType;
-    }
-
-    /**
-     * @param sourceType the sourceType to set
-     */
-    public void setSourceType(SourceType sourceType) {
-        this.sourceType = sourceType;
-    }
-
-    /**
-     * @return the file
-     */
-    public File getFile() {
-        return file;
-    }
-
-    /**
-     * @param file the file to set
-     */
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    /**
-     * @return the fileFormatOption
-     */
-    public FileFormatOption getFileFormatOption() {
-        return fileFormatOption;
-    }
-
-    /**
-     * @param fileFormatOption the fileFormatOption to set
-     */
-    public void setFileFormatOption(FileFormatOption fileFormatOption) {
-        this.fileFormatOption = fileFormatOption;
-    }
-
-    /**
-     * @return the cliType
-     */
-    public CommandLineType getCliType() {
-        return cliType;
-    }
-
-    /**
-     * @param cliType the cliType to set
-     */
-    public void setCliType(CommandLineType cliType) {
-        this.cliType = cliType;
     }
 
     public void initOptions(String[] args) {
@@ -90,13 +50,13 @@ public class Option {
                 if (i == args.length) {
                     continue;
                 } else if (file == null) {
-                    file = new File(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg));
+                    file = new File(StringHelper.eventuallyRemoveStartingAndEndingDoubleQuote(arg));
                 }
             } else if (arg.equalsIgnoreCase("-help") || arg.equalsIgnoreCase("-h")) {
                 cliType = CommandLineType.HELP;
                 return;
             } else if (file == null) {
-                file = new File(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg));
+                file = new File(StringHelper.eventuallyRemoveStartingAndEndingDoubleQuote(arg));
             }
         }
     }
