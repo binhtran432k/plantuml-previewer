@@ -91,9 +91,9 @@ public class MainWindowListener implements KeyListener, ComponentListener {
         } else if (e.getKeyCode() == KeyEvent.VK_M) {
             menuBarController.toggleMenuBar();
         } else if (e.getKeyCode() == KeyEvent.VK_N) {
-            imageBoardController.goNextPage();
+            imageBoardController.goNextImage();
         } else if (e.getKeyCode() == KeyEvent.VK_P) {
-            imageBoardController.goPrevPage();
+            imageBoardController.goPrevImage();
         }
     }
 

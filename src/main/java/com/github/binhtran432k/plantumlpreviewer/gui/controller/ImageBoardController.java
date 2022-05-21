@@ -114,13 +114,21 @@ public class ImageBoardController {
         imageBoardModel.setViewScrollBarAndNotify(!imageBoardModel.isViewScrollBar());
     }
 
-    public void goNextPage() {
-        imageBoardModel.setIndex(imageBoardModel.getIndex() + 1);
+    public void goNextImage() {
+        int index = imageBoardModel.getIndex() + 1;
+        if (index >= imageBoardModel.getMaxImage()) {
+            return;
+        }
+        imageBoardModel.setIndex(index);
         updateImage(true);
     }
 
-    public void goPrevPage() {
-        imageBoardModel.setIndex(imageBoardModel.getIndex() - 1);
+    public void goPrevImage() {
+        int index = imageBoardModel.getIndex() - 1;
+        if (index < 0) {
+            return;
+        }
+        imageBoardModel.setIndex(index);
         updateImage(true);
     }
 
@@ -129,7 +137,7 @@ public class ImageBoardController {
     }
 
     private void updateImage(boolean isBuffer) {
-        statusBarController.setFileInfoStatus();
+        statusBarController.setPendingStatus();
         new Thread(() -> {
             PlantUmlImage plantUmlImage = getPlantUmlImage(isBuffer);
 
@@ -142,6 +150,7 @@ public class ImageBoardController {
             imageBoardModel.setMaxImage(plantUmlImage.getMaxImage());
             imageBoardModel.setDescription(plantUmlImage.getDescription());
             imageBoardModel.setImagesAndNotify(plantUmlImage.getImage());
+            statusBarController.setFileInfoStatus();
         }).start();
     }
 
