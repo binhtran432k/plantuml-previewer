@@ -3,7 +3,7 @@
  */
 package com.github.binhtran432k.plantumlpreviewer;
 
-import javax.swing.SwingUtilities;
+import com.github.binhtran432k.plantumlpreviewer.cli.CommandLineManager;
 
 /**
  * Main application
@@ -12,13 +12,10 @@ import javax.swing.SwingUtilities;
  * @since 1.0.0
  *
  */
-public class App {
+public class Runner {
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.setVisible(true);
-        });
+        new CommandLineManager(args);
     }
 
 }

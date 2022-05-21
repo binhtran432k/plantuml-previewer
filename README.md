@@ -1,14 +1,14 @@
-# PlantUML Previewer for Neovim
+# PlantUML Previewer
 
-## Goal
+## TODO
 
 - [x] Main panel
 - [x] Status panel
 - [x] Menu bar
-- [ ] PlantUML image viewer
-- [ ] Image zoom
-- [ ] Image manipulation
-- [ ] Keybindings
+- [x] PlantUML image viewer
+- [x] Image zoom
+- [x] Image manipulation
+- [x] Keybindings
 - [ ] Keybindings Help
 - [ ] About
 - [ ] Open File Feature
