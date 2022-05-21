@@ -120,10 +120,6 @@ public class ImageBoardView implements IViewSubcriber {
         boolean isZoomIn = foldZoom > 1;
         boolean moveCenter = true;
 
-        if (isZoomIn && action == ZoomAction.ZOOMABLE && zoom > 10) {
-            return;
-        }
-
         if (action == ZoomAction.BEST_FIT) {
             foldZoom = ImageHelperPlus.getBestFitZoom(image.getWidth(), image.getHeight(), imageBoard.getWidth(),
                     imageBoard.getHeight());

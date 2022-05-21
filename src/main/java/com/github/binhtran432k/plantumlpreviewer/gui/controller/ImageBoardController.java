@@ -57,6 +57,9 @@ public class ImageBoardController {
     }
 
     public void zoomImageIn() {
+        if (imageBoardModel.getZoom() >= 10) {
+            return;
+        }
         imageBoardModel.setFoldZoom(Option.DEFAULT_ZOOM_IN_FOLD);
         imageBoardModel.setZoomActionAndNotify(ZoomAction.ZOOMABLE);
     }
