@@ -46,7 +46,7 @@ public class GuiManager {
             // Model
             MenuBarModel menuBarModel = new MenuBarModel(option);
             ImageBoardModel imageBoardModel = new ImageBoardModel(option);
-            StatusBarModel statusBarModel = new StatusBarModel();
+            StatusBarModel statusBarModel = new StatusBarModel(option);
 
             // Controller
             WindowController windowController = new WindowController();

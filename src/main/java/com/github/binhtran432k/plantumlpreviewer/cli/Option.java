@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.github.binhtran432k.plantumlpreviewer.core.PlantUmlFormat;
 import com.github.binhtran432k.plantumlpreviewer.gui.helper.StringHelper;
+import com.github.binhtran432k.plantumlpreviewer.gui.model.StatusAction;
 import com.github.binhtran432k.plantumlpreviewer.gui.model.ZoomAction;
 
 import lombok.Getter;
@@ -33,6 +34,7 @@ public class Option {
     private double zoom = 1;
     private int index = 0;
     private ZoomAction zoomAction = ZoomAction.ZOOMABLE;
+    private StatusAction statusAction = StatusAction.INITIALIZING;
 
     private File file;
     private PlantUmlFormat plantUmlFormat = PlantUmlFormat.PNG;
