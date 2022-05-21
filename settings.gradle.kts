@@ -8,4 +8,3 @@
  */
 
 rootProject.name = "plantuml-previewer"
-include("app")
