@@ -8,7 +8,7 @@
 - [x] PlantUML image viewer
 - [x] Image zoom
 - [x] Image manipulation
-- [ ] Keybindings
+- [x] Keybindings
 - [ ] Keybindings Help
 - [ ] About
 - [ ] Open File Feature
