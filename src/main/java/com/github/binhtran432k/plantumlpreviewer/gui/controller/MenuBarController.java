@@ -13,9 +13,11 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class MenuBarController {
+
     private final MenuBarModel menuBarModel;
 
     public void toggleMenuBar() {
         menuBarModel.setVisibleAndNotify(!menuBarModel.isVisible());
     }
+
 }

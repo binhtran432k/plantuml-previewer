@@ -9,6 +9,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.github.binhtran432k.plantumlpreviewer.cli.Option;
+import com.github.binhtran432k.plantumlpreviewer.gui.controller.ApplicationController;
 import com.github.binhtran432k.plantumlpreviewer.gui.controller.ImageBoardController;
 import com.github.binhtran432k.plantumlpreviewer.gui.controller.MenuBarController;
 import com.github.binhtran432k.plantumlpreviewer.gui.controller.StatusBarController;
@@ -57,13 +58,13 @@ public class GuiManager {
             StatusBarController statusBarController = new StatusBarController(statusBarModel);
             ImageBoardController imageBoardController = new ImageBoardController(imageBoardModel, statusBarController);
             MenuBarController menuBarController = new MenuBarController(menuBarModel);
+            ApplicationController applicationController = new ApplicationController(windowController,
+                    imageBoardController, menuBarController);
 
             // View listener
             ImageBoardListener listener = new ImageBoardListener(imageBoardController);
-            MainWindowListener mainWindowListener = new MainWindowListener(windowController, imageBoardController,
-                    menuBarController);
-            MenuBarListener menuBarListener = new MenuBarListener(menuBarController, imageBoardController,
-                    windowController);
+            MainWindowListener mainWindowListener = new MainWindowListener(applicationController);
+            MenuBarListener menuBarListener = new MenuBarListener(applicationController);
 
             // View
             MenuBarView menuBarView = new MenuBarView(menuBarModel, menuBarListener);
