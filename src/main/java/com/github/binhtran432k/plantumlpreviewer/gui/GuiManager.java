@@ -1,6 +1,10 @@
 package com.github.binhtran432k.plantumlpreviewer.gui;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -58,7 +62,8 @@ public class GuiManager {
             ImageBoardListener listener = new ImageBoardListener(imageBoardController);
             MainWindowListener mainWindowListener = new MainWindowListener(windowController, imageBoardController,
                     menuBarController);
-            MenuBarListener menuBarListener = new MenuBarListener(menuBarController, imageBoardController, windowController);
+            MenuBarListener menuBarListener = new MenuBarListener(menuBarController, imageBoardController,
+                    windowController);
 
             // View
             MenuBarView menuBarView = new MenuBarView(menuBarModel, menuBarListener);
@@ -69,12 +74,23 @@ public class GuiManager {
             PreviewPrincipalView previewPrincipalView = new PreviewPrincipalView(imageBoardView, statusBarView);
             mainWindowView.setPrincipleView(previewPrincipalView);
 
-            imageBoardController.reloadImageFromFile();
+            watchFileChange(imageBoardController, option);
 
             // Notify First time
             menuBarModel.notifyAllSubcribers();
             imageBoardModel.notifyAllSubcribers();
         });
+    }
+
+    private void watchFileChange(ImageBoardController imageBoardController, Option option) {
+        ExecutorService executor = Executors.newFixedThreadPool(option.getNbThread());
+        Timer timer = new Timer(option.getPeriod(), e -> {
+            executor.submit(() -> {
+                imageBoardController.reloadImageFromFileOnChanged();
+            });
+        });
+        timer.setInitialDelay(0);
+        timer.start();
     }
 
 }

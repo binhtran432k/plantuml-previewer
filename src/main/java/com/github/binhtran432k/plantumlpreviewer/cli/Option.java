@@ -33,6 +33,8 @@ public class Option {
     private boolean isViewScrollBar = false;
     private double zoom = 1;
     private int index = 0;
+    private int nbThread = 1;
+    private int period = 300;
     private ZoomAction zoomAction = ZoomAction.ZOOMABLE;
     private StatusAction statusAction = StatusAction.INITIALIZING;
 

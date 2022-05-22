@@ -1,10 +1,10 @@
 package com.github.binhtran432k.plantumlpreviewer.gui.model;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 
 import com.github.binhtran432k.plantumlpreviewer.cli.Option;
 import com.github.binhtran432k.plantumlpreviewer.core.PlantUmlFormat;
+import com.github.binhtran432k.plantumlpreviewer.gui.FileWatcher;
 import com.github.binhtran432k.plantumlpreviewer.gui.view.SubcribeAction;
 
 import lombok.Getter;
@@ -21,12 +21,12 @@ import lombok.Setter;
 @Setter
 public class ImageBoardModel extends ModelPublisher {
 
+    private final FileWatcher fileWatcher;
     private boolean isImageMoving;
     private boolean isViewScrollBar;
     private ZoomAction zoomAction;
     private int index;
     private int maxImage = 0;
-    private File file;
     private BufferedImage image;
     private String description = "";
     private BufferedImage zoomedImage;
@@ -41,7 +41,7 @@ public class ImageBoardModel extends ModelPublisher {
         this.index = option.getIndex();
         this.isViewScrollBar = option.isViewScrollBar();
         this.foldZoom = option.getZoom();
-        this.file = option.getFile();
+        this.fileWatcher = new FileWatcher(option.getFile());
         this.zoomAction = option.getZoomAction();
     }
 
