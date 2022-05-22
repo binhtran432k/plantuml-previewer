@@ -7,6 +7,8 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -23,6 +25,7 @@ import com.github.binhtran432k.plantumlpreviewer.gui.model.ImageBoardModel;
 import com.github.binhtran432k.plantumlpreviewer.gui.model.ZoomAction;
 import com.github.binhtran432k.plantumlpreviewer.gui.ui.SmoothLabel;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -34,7 +37,16 @@ import lombok.Getter;
  */
 public class ImageBoardView implements IViewSubcriber {
 
+    @Getter
+    @AllArgsConstructor
+    private class ImageSession {
+        int x;
+        int y;
+        double zoom;
+    }
+
     private final Cursor MOVING_CURSOR = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+    private final Map<Integer, ImageSession> cachedImageSessions = new HashMap<>();
 
     private @Getter JScrollPane imageBoard;
     private SmoothLabel imageWrapper;
@@ -50,6 +62,7 @@ public class ImageBoardView implements IViewSubcriber {
         imageBoardModel.subcribe(SubcribeAction.ZOOM, this);
         imageBoardModel.subcribe(SubcribeAction.IMAGE, this);
         imageBoardModel.subcribe(SubcribeAction.DIFF_COORDINATE, this);
+        imageBoardModel.subcribe(SubcribeAction.CLEAR_IMAGE_SESSION_CACHE, this);
     }
 
     @Override
@@ -64,8 +77,10 @@ public class ImageBoardView implements IViewSubcriber {
             updateScrollBarVisible();
         } else if (action == SubcribeAction.DIFF_COORDINATE) {
             moveScrollBarByDiff();
+        } else if (action == SubcribeAction.CLEAR_IMAGE_SESSION_CACHE) {
+            cachedImageSessions.clear();
         } else if (action == SubcribeAction.IMAGE || action == SubcribeAction.ZOOM) {
-            reloadImage();
+            loadImage();
         }
     }
 
@@ -108,7 +123,7 @@ public class ImageBoardView implements IViewSubcriber {
         }
     }
 
-    private void reloadImage() {
+    private void loadImage() {
         BufferedImage image = imageBoardModel.getImage();
         if (image == null) {
             return;
@@ -116,46 +131,54 @@ public class ImageBoardView implements IViewSubcriber {
 
         double zoom = imageBoardModel.getZoom();
         double foldZoom = imageBoardModel.getFoldZoom();
+        double newZoom = foldZoom;
         ZoomAction action = imageBoardModel.getZoomAction();
-        boolean isZoomIn = foldZoom > 1;
+        boolean isZoomIn = newZoom > 1;
         boolean moveCenter = true;
 
         if (action == ZoomAction.BEST_FIT) {
-            foldZoom = ImageHelperPlus.getBestFitZoom(image.getWidth(), image.getHeight(), imageBoard.getWidth(),
+            newZoom = ImageHelperPlus.getBestFitZoom(image.getWidth(), image.getHeight(), imageBoard.getWidth(),
                     imageBoard.getHeight());
         } else if (action == ZoomAction.WIDTH_FIT) {
-            foldZoom = ImageHelperPlus.getWidthFitZoom(image.getWidth(), imageBoard.getWidth());
+            newZoom = ImageHelperPlus.getWidthFitZoom(image.getWidth(), imageBoard.getWidth());
         } else if (action == ZoomAction.IMAGE_SIZE) {
-            foldZoom = 1;
+            newZoom = 1;
         } else if (action == ZoomAction.ZOOMABLE) {
             if (zoom < 2.5) {
-                foldZoom = zoom * foldZoom;
+                newZoom = zoom * newZoom;
                 if (isZoomIn) {
                     int width = imageBoardModel.getZoomedImage().getWidth();
-                    int newWidth = (int) (foldZoom * image.getWidth());
+                    int newWidth = (int) (newZoom * image.getWidth());
                     while (newWidth <= width) {
-                        foldZoom += 0.01;
-                        newWidth = (int) (foldZoom * image.getWidth());
+                        newZoom += Option.MIN_ZOOM;
+                        newWidth = (int) (newZoom * image.getWidth());
                     }
                 }
+            } else if (newZoom * zoom >= Option.MAX_ZOOM) {
+                newZoom = Option.MAX_ZOOM;
+                foldZoom = newZoom / zoom;
             } else {
                 image = imageBoardModel.getZoomedImage();
             }
 
-            moveCenter = foldZoom * image.getWidth() <= imageBoard.getWidth();
+            moveCenter = newZoom * image.getWidth() <= imageBoard.getWidth();
         }
-        if (image != null) {
-            foldZoom = Math.max(0.01, foldZoom);
 
-            image = ImageHelperPlus.getScaledImage(image, foldZoom);
+        if (image != null) {
+            if (action == ZoomAction.CACHED) {
+                loadImageFromCached(image);
+                return;
+            }
+
+            newZoom = Math.max(Option.MIN_ZOOM, Math.min(Option.MAX_ZOOM, newZoom));
+
+            image = ImageHelperPlus.getScaledImage(image, newZoom);
             imageBoardModel.setZoomedImage(image);
 
             boolean isIconExist = imageWrapper.getIcon() != null;
 
             final ImageIcon icon = new ImageIcon(image);
             imageWrapper.setIcon(icon);
-            imageBoard.revalidate();
-            imageBoard.repaint();
 
             if (!isIconExist) {
                 SwingUtilities.invokeLater(() -> {
@@ -164,7 +187,7 @@ public class ImageBoardView implements IViewSubcriber {
             } else if (moveCenter) {
                 moveScrollBarCenter();
             } else {
-                moveScrollBarCenterOfZoom(imageBoardModel.getFoldZoom());
+                moveScrollBarCenterOfZoom(foldZoom);
             }
 
             imageBoardModel.setFoldZoom(1);
@@ -176,29 +199,42 @@ public class ImageBoardView implements IViewSubcriber {
         reloadScrollBarInstance(imageBoard.getHorizontalScrollBar(), isViewScrollBar);
         reloadScrollBarInstance(imageBoard.getVerticalScrollBar(), isViewScrollBar);
         imageBoard.revalidate();
-        imageBoard.repaint();
+    }
+
+    private void loadImageFromCached(BufferedImage image) {
+        ImageSession imageSession = cachedImageSessions.get(imageBoardModel.getIndex());
+
+        if (imageSession != null) {
+            image = ImageHelperPlus.getScaledImage(image, imageSession.getZoom());
+        }
+
+        imageBoardModel.setZoomedImage(image);
+
+        final ImageIcon icon = new ImageIcon(image);
+        imageWrapper.setIcon(icon);
+
+        if (imageSession != null) {
+            SwingUtilities.invokeLater(() -> {
+                updateModelCoordinate(imageSession.getX(), imageSession.getY());
+            });
+        } else {
+            SwingUtilities.invokeLater(() -> {
+                moveScrollBarCenter();
+            });
+        }
     }
 
     private void moveScrollBarByDiff() {
         JScrollBar hScrollBar = imageBoard.getHorizontalScrollBar();
-        int diffX = imageBoardModel.getDiffX();
-        if (diffX == Integer.MIN_VALUE || diffX == Integer.MAX_VALUE) {
-            hScrollBar.setValue(diffX);
-        } else {
-            hScrollBar.setValue(hScrollBar.getValue() - diffX);
-        }
         JScrollBar vScrollBar = imageBoard.getVerticalScrollBar();
-        int diffY = imageBoardModel.getDiffY();
-        if (diffY == Integer.MIN_VALUE || diffY == Integer.MAX_VALUE) {
-            vScrollBar.setValue(diffY);
-        } else {
-            vScrollBar.setValue(vScrollBar.getValue() - diffY);
-        }
+
+        int x = addBound(hScrollBar.getValue(), imageBoardModel.getDiffX());
+        int y = addBound(vScrollBar.getValue(), imageBoardModel.getDiffY());
 
         imageBoardModel.setDiffX(0);
         imageBoardModel.setDiffY(0);
 
-        updateModelCoordinate();
+        updateModelCoordinate(x, y);
     }
 
     private void moveScrollBarCenter() {
@@ -208,47 +244,54 @@ public class ImageBoardView implements IViewSubcriber {
         int maxHorizontal = Math.max(hScrollBar.getMaximum() - imageBoard.getWidth(), 0);
         int maxVertical = Math.max(vScrollBar.getMaximum() - imageBoard.getHeight(), 0);
 
-        hScrollBar.setValue(maxHorizontal / 2);
-        vScrollBar.setValue(maxVertical / 2);
-
-        updateModelCoordinate();
+        updateModelCoordinate(maxHorizontal / 2, maxVertical / 2);
     }
 
     private void moveScrollBarCenterOfZoom(double foldZoom) {
-        if (foldZoom == 1) {
-            return;
-        }
-
         JScrollBar hScrollBar = imageBoard.getHorizontalScrollBar();
         JScrollBar vScrollBar = imageBoard.getVerticalScrollBar();
 
         Point newPoint = ImageHelperPlus.getScaledPoint(hScrollBar.getValue(), vScrollBar.getValue(),
                 imageBoard.getWidth(), imageBoard.getHeight(), foldZoom);
 
-        hScrollBar.setValue((int) newPoint.getX());
-        vScrollBar.setValue((int) newPoint.getY());
-
-        updateModelCoordinate();
+        updateModelCoordinate(newPoint.x, newPoint.y);
     }
 
-    private void updateModelCoordinate() {
+    private void updateModelCoordinate(int x, int y) {
         JScrollBar hScrollBar = imageBoard.getHorizontalScrollBar();
         JScrollBar vScrollBar = imageBoard.getVerticalScrollBar();
+
+        imageBoard.repaint();
+        hScrollBar.setValue(x);
+        vScrollBar.setValue(y);
+        int newX = hScrollBar.getValue();
+        int newY = vScrollBar.getValue();
 
         int maxHorizontal = Math.max(hScrollBar.getMaximum() - imageBoard.getWidth(), 0);
         int maxVertical = Math.max(vScrollBar.getMaximum() - imageBoard.getHeight(), 0);
 
-        int x = 0;
-        int y = 0;
+        int percentX = 0;
+        int percentY = 0;
 
         if (maxHorizontal > 0) {
-            x = hScrollBar.getValue() * 100 / maxHorizontal;
+            percentX = newX * 100 / maxHorizontal;
         }
         if (maxVertical > 0) {
-            y = vScrollBar.getValue() * 100 / maxVertical;
+            percentY = newY * 100 / maxVertical;
         }
 
-        imageBoardModel.setCoordinateAndNotifyStatus(x, y);
+        imageBoardModel.setCoordinateAndNotifyStatus(percentX, percentY);
+
+        cachedImageSessions.put(imageBoardModel.getIndex(),
+                new ImageSession(newX, newY, imageBoardModel.getZoom()));
+    }
+
+    private int addBound(int value, int diff) {
+        if (diff == Integer.MAX_VALUE || diff == Integer.MIN_VALUE) {
+            return diff;
+        }
+
+        return value + diff;
     }
 
 }

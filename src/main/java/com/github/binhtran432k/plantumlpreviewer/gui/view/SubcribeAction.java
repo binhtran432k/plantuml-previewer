@@ -8,6 +8,7 @@ public enum SubcribeAction {
     TITLE,
     PANEL,
     ZOOM,
+    CLEAR_IMAGE_SESSION_CACHE,
     DIFF_COORDINATE,
     IMAGE,
 }

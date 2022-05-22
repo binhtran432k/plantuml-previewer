@@ -35,7 +35,7 @@ public class ImageBoardModel extends ModelPublisher {
     private int y = 50;
     private int diffX = 0;
     private int diffY = 0;
-    private double foldZoom;
+    private double foldZoom = 1;
 
     public ImageBoardModel(Option option) {
         this.index = option.getIndex();
