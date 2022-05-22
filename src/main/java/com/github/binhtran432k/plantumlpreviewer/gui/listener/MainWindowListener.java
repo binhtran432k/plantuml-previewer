@@ -5,10 +5,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import com.github.binhtran432k.plantumlpreviewer.cli.Option;
-import com.github.binhtran432k.plantumlpreviewer.gui.controller.ImageBoardController;
-import com.github.binhtran432k.plantumlpreviewer.gui.controller.MenuBarController;
-import com.github.binhtran432k.plantumlpreviewer.gui.controller.WindowController;
+import com.github.binhtran432k.plantumlpreviewer.gui.controller.ApplicationController;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,9 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MainWindowListener implements KeyListener, ComponentListener {
 
-    private final WindowController windowController;
-    private final ImageBoardController imageBoardController;
-    private final MenuBarController menuBarController;
+    private final ApplicationController applicationController;
 
     @Override
     public void componentHidden(ComponentEvent e) {
@@ -36,7 +31,7 @@ public class MainWindowListener implements KeyListener, ComponentListener {
 
     @Override
     public void componentResized(ComponentEvent e) {
-        imageBoardController.refreshImageZoom();
+        applicationController.doAction(ApplicationAction.REFRESH_ZOOM);
     }
 
     @Override
@@ -45,55 +40,66 @@ public class MainWindowListener implements KeyListener, ComponentListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        int speedFactor = 1;
-        if (e.isShiftDown()) {
-            speedFactor = Option.FAST_SPEED_FACTOR;
-        }
-
         if (e.getKeyCode() == KeyEvent.VK_EQUALS) {
             if (e.isShiftDown()) {
-                imageBoardController.zoomImageIn();
+                applicationController.doAction(ApplicationAction.ZOOM_IN);
             } else {
-                imageBoardController.zoomImageImageSize();
+                applicationController.doAction(ApplicationAction.ZOOM_IMAGE_SIZE);
             }
         } else if (e.getKeyCode() == KeyEvent.VK_PLUS) {
-            imageBoardController.zoomImageIn();
+            applicationController.doAction(ApplicationAction.ZOOM_IN);
         } else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
-            imageBoardController.zoomImageOut();
+            applicationController.doAction(ApplicationAction.ZOOM_OUT);
         } else if (e.getKeyCode() == KeyEvent.VK_A) {
-            imageBoardController.zoomImageBestFit();
+            applicationController.doAction(ApplicationAction.ZOOM_BEST_FIT);
         } else if (e.getKeyCode() == KeyEvent.VK_S) {
-            imageBoardController.zoomImageWidthFit();
+            applicationController.doAction(ApplicationAction.ZOOM_WIDTH_FIT);
         } else if (e.getKeyCode() == KeyEvent.VK_Q) {
-            windowController.closeWindow();
+            applicationController.doAction(ApplicationAction.QUIT);
         } else if (e.getKeyCode() == KeyEvent.VK_R) {
-            imageBoardController.reloadImageFromFile();
+            applicationController.doAction(ApplicationAction.RELOAD_IMAGE);
         } else if (e.getKeyCode() == KeyEvent.VK_H || e.getKeyCode() == KeyEvent.VK_LEFT) {
-            imageBoardController.scrollImageLeft(speedFactor);
+            if (e.isShiftDown()) {
+                applicationController.doAction(ApplicationAction.MOVE_LEFT_PLUS);
+            } else {
+                applicationController.doAction(ApplicationAction.MOVE_LEFT);
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_J || e.getKeyCode() == KeyEvent.VK_DOWN) {
-            imageBoardController.scrollImageDown(speedFactor);
+            if (e.isShiftDown()) {
+                applicationController.doAction(ApplicationAction.MOVE_DOWN_PLUS);
+            } else {
+                applicationController.doAction(ApplicationAction.MOVE_DOWN);
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_K || e.getKeyCode() == KeyEvent.VK_UP) {
-            imageBoardController.scrollImageUp(speedFactor);
+            if (e.isShiftDown()) {
+                applicationController.doAction(ApplicationAction.MOVE_UP_PLUS);
+            } else {
+                applicationController.doAction(ApplicationAction.MOVE_UP);
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_L || e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            imageBoardController.scrollImageRight(speedFactor);
+            if (e.isShiftDown()) {
+                applicationController.doAction(ApplicationAction.MOVE_RIGHT_PLUS);
+            } else {
+                applicationController.doAction(ApplicationAction.MOVE_RIGHT);
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_G) {
             if (e.isShiftDown()) {
-                imageBoardController.scrollImageBottom();
+                applicationController.doAction(ApplicationAction.MOVE_BOTTOM);
             } else {
-                imageBoardController.scrollImageTop();
+                applicationController.doAction(ApplicationAction.MOVE_TOP);
             }
         } else if (e.getKeyCode() == KeyEvent.VK_4 && e.isShiftDown()) {
-            imageBoardController.scrollImageEnd();
+            applicationController.doAction(ApplicationAction.MOVE_END);
         } else if (e.getKeyCode() == KeyEvent.VK_0) {
-            imageBoardController.scrollImageBegin();
+            applicationController.doAction(ApplicationAction.MOVE_BEGIN);
         } else if (e.getKeyCode() == KeyEvent.VK_C) {
-            imageBoardController.toggleScrollBar();
+            applicationController.doAction(ApplicationAction.TOGGLE_SCROLL_BAR);
         } else if (e.getKeyCode() == KeyEvent.VK_M) {
-            menuBarController.toggleMenuBar();
+            applicationController.doAction(ApplicationAction.TOGGLE_MENU_BAR);
         } else if (e.getKeyCode() == KeyEvent.VK_N) {
-            imageBoardController.goNextImage();
+            applicationController.doAction(ApplicationAction.GO_NEXT_IMAGE);
         } else if (e.getKeyCode() == KeyEvent.VK_P) {
-            imageBoardController.goPrevImage();
+            applicationController.doAction(ApplicationAction.GO_PREV_IMAGE);
         }
     }
 
