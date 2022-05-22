@@ -2,6 +2,7 @@ package com.github.binhtran432k.plantumlpreviewer.gui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.io.File;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -71,8 +72,10 @@ public class StatusBarView implements IViewSubcriber {
             status = "Initializing...";
         } else if (statusAction == StatusAction.PENDING) {
             status = "Pending...";
-        } else if (statusAction == StatusAction.NO_FILE) {
-            status = "No file to preview";
+        } else if (statusAction == StatusAction.OPENING) {
+            status = "Opening...";
+        } else if (statusAction == StatusAction.ZOOMING) {
+            status = "Zooming...";
         } else if (statusAction == StatusAction.PREVIEWING) {
             status = generateImageStatus();
         }
@@ -87,8 +90,17 @@ public class StatusBarView implements IViewSubcriber {
     }
 
     private String generateImageStatus() {
+        File file = imageBoardModel.getFileWatcher().getFile();
+        if (file == null) {
+            return "No file to preview";
+        } else if (!file.exists()) {
+            return "File not found";
+        } else if (imageBoardModel.getImage() == null) {
+            return "No image to preview";
+        }
+
         String pageNumber = String.format("%d/%d", imageBoardModel.getIndex() + 1, imageBoardModel.getMaxImage());
-        String name = String.format("%s %s", imageBoardModel.getFileWatcher().getFile().getName(),
+        String name = String.format("%s %s", file.getName(),
                 imageBoardModel.getDescription());
         String zoom = String.format("[%d%%]", Math.round(imageBoardModel.getZoom() * 100));
         String coordinate = String.format("%s %s", imageBoardModel.getX(), imageBoardModel.getY());

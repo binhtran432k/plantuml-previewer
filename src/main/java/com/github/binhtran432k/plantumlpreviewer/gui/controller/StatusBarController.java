@@ -21,12 +21,16 @@ public class StatusBarController {
         statusBarModel.setStatusActionAndNotify(StatusAction.PENDING);
     }
 
-    public void setNoFileStatus() {
-        statusBarModel.setStatusActionAndNotify(StatusAction.NO_FILE);
+    public void setPreviewImageStatus() {
+        statusBarModel.setStatusActionAndNotify(StatusAction.PREVIEWING);
     }
 
-    public void setFileInfoStatus() {
-        statusBarModel.setStatusActionAndNotify(StatusAction.PREVIEWING);
+    public void setOpeningStatus() {
+        statusBarModel.setStatusActionAndNotify(StatusAction.OPENING);
+    }
+
+    public void setZoomingStatus() {
+        statusBarModel.setStatusActionAndNotify(StatusAction.ZOOMING);
     }
 
 }

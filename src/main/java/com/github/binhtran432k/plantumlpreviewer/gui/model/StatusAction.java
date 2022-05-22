@@ -8,8 +8,9 @@ package com.github.binhtran432k.plantumlpreviewer.gui.model;
  *
  */
 public enum StatusAction {
-    NO_FILE,
     PREVIEWING,
     PENDING,
     INITIALIZING,
+    OPENING,
+    ZOOMING,
 }

@@ -32,7 +32,7 @@ public class PlantUmlLoader {
         try {
             String source = Files.readString(file.toPath());
             reader = new SourceStringReader(source);
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             reader = null;
         }
 
@@ -40,10 +40,6 @@ public class PlantUmlLoader {
     }
 
     public PlantUmlImage getImageFromBuffer(int index, PlantUmlFormat format) {
-        if (reader == null) {
-            return null;
-        }
-
         PlantUmlImage cachedImage = cachedImages.get(index);
         if (cachedImage != null) {
             return cachedImage;
@@ -67,7 +63,7 @@ public class PlantUmlLoader {
             cachedImages.put(index, plantUMLImage);
 
             return plantUMLImage;
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             cachedImages.clear();
 
             return null;

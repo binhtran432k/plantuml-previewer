@@ -36,7 +36,7 @@ public class Option {
     private int index = 0;
     private int nbThread = 1;
     private int period = 300;
-    private ZoomAction zoomAction = ZoomAction.ZOOMABLE;
+    private ZoomAction zoomAction = ZoomAction.UNKOWN;
     private StatusAction statusAction = StatusAction.INITIALIZING;
 
     private File file;

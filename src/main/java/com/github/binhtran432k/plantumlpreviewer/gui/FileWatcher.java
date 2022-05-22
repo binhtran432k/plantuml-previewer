@@ -4,7 +4,6 @@ import java.io.File;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * File Watcher for auto reload image when update
@@ -16,11 +15,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FileWatcher {
 
-    private @Getter @Setter File file;
-    private long modified = -1;
+    private @Getter File file;
+    private long modified;
 
     public FileWatcher(File file) {
+        setFileAndReset(file);
+    }
+
+    public void setFileAndReset(File file) {
         this.file = file;
+        this.modified = -1;
     }
 
     public boolean hasChanged() {

@@ -18,6 +18,7 @@ public class ApplicationController {
     private final WindowController windowController;
     private final ImageBoardController imageBoardController;
     private final MenuBarController menuBarController;
+    private final StatusBarController statusBarController;
 
     public void doAction(ApplicationAction action) {
         if (action == null) {
@@ -98,6 +99,9 @@ public class ApplicationController {
                 break;
             case RELOAD_IMAGE:
                 imageBoardController.reloadImageFromFile();
+                break;
+            case OPEN_FILE:
+                statusBarController.setOpeningStatus();
                 break;
             default:
                 break;

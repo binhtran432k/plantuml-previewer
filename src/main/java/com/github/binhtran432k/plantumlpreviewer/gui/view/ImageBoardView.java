@@ -80,7 +80,7 @@ public class ImageBoardView implements IViewSubcriber {
         } else if (action == SubcribeAction.CLEAR_IMAGE_SESSION_CACHE) {
             cachedImageSessions.clear();
         } else if (action == SubcribeAction.IMAGE || action == SubcribeAction.ZOOM) {
-            loadImage();
+            loadView();
         }
     }
 
@@ -123,18 +123,18 @@ public class ImageBoardView implements IViewSubcriber {
         }
     }
 
-    private void loadImage() {
+    private void loadView() {
         BufferedImage image = imageBoardModel.getImage();
         if (image == null) {
+            imageWrapper.setIcon(null);
             return;
         }
 
         double zoom = imageBoardModel.getZoom();
         double foldZoom = imageBoardModel.getFoldZoom();
         double newZoom = foldZoom;
-        ZoomAction action = imageBoardModel.getZoomAction();
+        final ZoomAction action = imageBoardModel.getZoomAction();
         boolean isZoomIn = newZoom > 1;
-        boolean moveCenter = false;
 
         if (action == ZoomAction.BEST_FIT) {
             newZoom = ImageHelperPlus.getBestFitZoom(image.getWidth(), image.getHeight(), imageBoard.getWidth(),
@@ -149,9 +149,8 @@ public class ImageBoardView implements IViewSubcriber {
                 if (isZoomIn) {
                     int width = imageBoardModel.getZoomedImage().getWidth();
                     int newWidth = (int) (newZoom * image.getWidth());
-                    while (newWidth <= width) {
-                        newZoom += Option.MIN_ZOOM;
-                        newWidth = (int) (newZoom * image.getWidth());
+                    if (newWidth <= width) {
+                        newZoom = (width + 1) / width;
                     }
                 }
             } else if (newZoom * zoom >= Option.MAX_ZOOM) {
@@ -159,41 +158,44 @@ public class ImageBoardView implements IViewSubcriber {
                 foldZoom = newZoom / zoom;
             } else {
                 image = imageBoardModel.getZoomedImage();
-            }
-
-            moveCenter = newZoom * image.getWidth() <= imageBoard.getWidth();
-        }
-
-        if (image != null) {
-            if (action == ZoomAction.CACHED) {
-                loadImageFromCached(image);
-                return;
-            }
-
-            newZoom = Math.max(Option.MIN_ZOOM, Math.min(Option.MAX_ZOOM, newZoom));
-
-            image = ImageHelperPlus.getScaledImage(image, newZoom);
-            imageBoardModel.setZoomedImage(image);
-
-            boolean isIconExist = imageWrapper.getIcon() != null;
-
-            final ImageIcon icon = new ImageIcon(image);
-            imageWrapper.setIcon(icon);
-
-            // For passing to runable
-            final double finalFoldZoom = foldZoom;
-            final boolean finalNeedMoveCenter = !isIconExist || moveCenter;
-
-            SwingUtilities.invokeLater(() -> {
-                if (finalNeedMoveCenter) {
-                    moveScrollBarCenter();
-                } else {
-                    moveScrollBarCenterOfZoom(finalFoldZoom);
+                if (image == null) {
+                    return;
                 }
-            });
-
-            imageBoardModel.setFoldZoom(1);
+            }
         }
+
+        final ImageSession imageSession = cachedImageSessions.get(imageBoardModel.getIndex());
+
+        if (action == ZoomAction.UNKOWN && imageSession != null) {
+            newZoom = imageSession.getZoom();
+        }
+
+        newZoom = Math.max(Option.MIN_ZOOM, Math.min(Option.MAX_ZOOM, newZoom));
+
+        image = ImageHelperPlus.getScaledImage(image, newZoom);
+        loadImage(image, imageSession, action, foldZoom, newZoom);
+    }
+
+    private void loadImage(final BufferedImage image, final ImageSession imageSession, final ZoomAction action,
+            final double foldZoom, final double newZoom) {
+        imageBoardModel.setZoomedImage(image);
+        final ImageIcon icon = new ImageIcon(image);
+        imageWrapper.setIcon(icon);
+
+        SwingUtilities.invokeLater(() -> {
+            if (action == ZoomAction.UNKOWN) {
+                if (imageSession != null) {
+                    updateModelCoordinate(imageSession.getX(), imageSession.getY());
+                } else {
+                    imageBoard.validate();
+                    moveScrollBarCenter();
+                }
+            } else {
+                moveScrollBarCenterOfZoom(foldZoom);
+            }
+        });
+
+        imageBoardModel.setFoldZoom(1);
     }
 
     private void updateScrollBarVisible() {
@@ -201,25 +203,6 @@ public class ImageBoardView implements IViewSubcriber {
         reloadScrollBarInstance(imageBoard.getHorizontalScrollBar(), isViewScrollBar);
         reloadScrollBarInstance(imageBoard.getVerticalScrollBar(), isViewScrollBar);
         imageBoard.revalidate();
-    }
-
-    private void loadImageFromCached(BufferedImage image) {
-        ImageSession imageSession = cachedImageSessions.get(imageBoardModel.getIndex());
-
-        if (imageSession != null) {
-            image = ImageHelperPlus.getScaledImage(image, imageSession.getZoom());
-        }
-
-        imageBoardModel.setZoomedImage(image);
-
-        final ImageIcon icon = new ImageIcon(image);
-        imageWrapper.setIcon(icon);
-
-        if (imageSession != null) {
-            SwingUtilities.invokeLater(() -> {
-                updateModelCoordinate(imageSession.getX(), imageSession.getY());
-            });
-        }
     }
 
     private void moveScrollBarByDiff() {
