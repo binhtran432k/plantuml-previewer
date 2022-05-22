@@ -57,8 +57,8 @@ public class ImageBoardController {
             return;
         }
 
-        final int diffX = dragPoint.x - cachedHoldPoint.x;
-        final int diffY = dragPoint.y - cachedHoldPoint.y;
+        final int diffX = cachedHoldPoint.x - dragPoint.x;
+        final int diffY = cachedHoldPoint.y - dragPoint.y;
 
         cachedHoldPoint = dragPoint; // update hold point
 
