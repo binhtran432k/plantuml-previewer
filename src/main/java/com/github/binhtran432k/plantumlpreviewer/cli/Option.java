@@ -30,7 +30,7 @@ public class Option {
     public static final int PRIMARY_COLOR = 0xe5e5e5;
     public static final int SECONDARY_COLOR = 0xc1c1c1;
 
-    private boolean isViewMenuBar = false;
+    private boolean isViewMenuBar = true;
     private boolean isViewScrollBar = false;
     private double zoom = 1;
     private int index = 0;
