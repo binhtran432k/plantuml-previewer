@@ -127,20 +127,20 @@ public class ImageBoardController {
     }
 
     public void goNextImage() {
-        int index = imageBoardModel.getIndex() + 1;
-        if (index >= imageBoardModel.getMaxImage()) {
+        int nextIndex = imageBoardModel.getIndex() + 1;
+        if (nextIndex >= imageBoardModel.getMaxImage()) {
             return;
         }
-        imageBoardModel.setIndex(index);
+        imageBoardModel.setIndex(nextIndex);
         updateImage(true);
     }
 
     public void goPrevImage() {
-        int index = imageBoardModel.getIndex() - 1;
-        if (index < 0) {
+        int prevIndex = imageBoardModel.getIndex() - 1;
+        if (prevIndex < 0) {
             return;
         }
-        imageBoardModel.setIndex(index);
+        imageBoardModel.setIndex(prevIndex);
         updateImage(true);
     }
 
