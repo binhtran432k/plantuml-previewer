@@ -66,15 +66,18 @@ public class ImageBoardController {
     }
 
     public void zoomImageIn() {
-        if (imageBoardModel.getZoom() >= 10) {
+        if (imageBoardModel.getZoom() >= Option.MAX_ZOOM) {
             return;
         }
-        imageBoardModel.setFoldZoom(Option.DEFAULT_ZOOM_IN_FOLD);
+        imageBoardModel.setFoldZoom(Option.FOLD_ZOOM_IN);
         imageBoardModel.setZoomActionAndNotify(ZoomAction.ZOOMABLE);
     }
 
     public void zoomImageOut() {
-        imageBoardModel.setFoldZoom(Option.DEFAULT_ZOOM_OUT_FOLD);
+        if (imageBoardModel.getZoom() <= Option.MIN_ZOOM) {
+            return;
+        }
+        imageBoardModel.setFoldZoom(1 / Option.FOLD_ZOOM_IN);
         imageBoardModel.setZoomActionAndNotify(ZoomAction.ZOOMABLE);
     }
 
@@ -132,7 +135,6 @@ public class ImageBoardController {
             return;
         }
         imageBoardModel.setIndex(nextIndex);
-        imageBoardModel.setZoomAction(ZoomAction.CACHED);
         updateImage(true);
     }
 
@@ -142,7 +144,6 @@ public class ImageBoardController {
             return;
         }
         imageBoardModel.setIndex(prevIndex);
-        imageBoardModel.setZoomAction(ZoomAction.CACHED);
         updateImage(true);
     }
 
@@ -153,6 +154,9 @@ public class ImageBoardController {
     private void updateImage(boolean isBuffer) {
         statusBarController.setPendingStatus();
         new Thread(() -> {
+            if (imageBoardModel.getZoomAction() == ZoomAction.ZOOMABLE) {
+                imageBoardModel.setZoomAction(ZoomAction.CACHED);
+            }
             PlantUmlImage plantUmlImage = getPlantUmlImage(isBuffer);
 
             if (plantUmlImage == null) {

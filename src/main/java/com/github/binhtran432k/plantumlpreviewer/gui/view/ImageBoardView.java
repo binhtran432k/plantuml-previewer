@@ -150,12 +150,12 @@ public class ImageBoardView implements IViewSubcriber {
                     int width = imageBoardModel.getZoomedImage().getWidth();
                     int newWidth = (int) (newZoom * image.getWidth());
                     while (newWidth <= width) {
-                        newZoom += 0.01;
+                        newZoom += Option.MIN_ZOOM;
                         newWidth = (int) (newZoom * image.getWidth());
                     }
                 }
-            } else if (newZoom * zoom >= 10) {
-                newZoom = 10;
+            } else if (newZoom * zoom >= Option.MAX_ZOOM) {
+                newZoom = Option.MAX_ZOOM;
                 foldZoom = newZoom / zoom;
             } else {
                 image = imageBoardModel.getZoomedImage();
@@ -170,7 +170,7 @@ public class ImageBoardView implements IViewSubcriber {
                 return;
             }
 
-            newZoom = Math.max(0.01, newZoom);
+            newZoom = Math.max(Option.MIN_ZOOM, Math.min(Option.MAX_ZOOM, newZoom));
 
             image = ImageHelperPlus.getScaledImage(image, newZoom);
             imageBoardModel.setZoomedImage(image);
@@ -261,6 +261,7 @@ public class ImageBoardView implements IViewSubcriber {
         JScrollBar hScrollBar = imageBoard.getHorizontalScrollBar();
         JScrollBar vScrollBar = imageBoard.getVerticalScrollBar();
 
+        imageBoard.repaint();
         hScrollBar.setValue(x);
         vScrollBar.setValue(y);
         int newX = hScrollBar.getValue();
