@@ -74,7 +74,7 @@ public class GuiManager {
             PreviewPrincipalView previewPrincipalView = new PreviewPrincipalView(imageBoardView, statusBarView);
             mainWindowView.setPrincipleView(previewPrincipalView);
 
-            watchFileChange(imageBoardController);
+            watchFileChange(imageBoardController, option);
 
             // Notify First time
             menuBarModel.notifyAllSubcribers();
@@ -82,9 +82,9 @@ public class GuiManager {
         });
     }
 
-    private void watchFileChange(ImageBoardController imageBoardController) {
-        ExecutorService executor = Executors.newFixedThreadPool(10);
-        Timer timer = new Timer(300, e -> {
+    private void watchFileChange(ImageBoardController imageBoardController, Option option) {
+        ExecutorService executor = Executors.newFixedThreadPool(option.getNbThread());
+        Timer timer = new Timer(option.getPeriod(), e -> {
             executor.submit(() -> {
                 imageBoardController.reloadImageFromFileOnChanged();
             });
