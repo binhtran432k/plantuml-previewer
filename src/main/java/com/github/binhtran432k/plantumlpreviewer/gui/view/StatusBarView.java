@@ -88,7 +88,7 @@ public class StatusBarView implements IViewSubcriber {
 
     private String generateImageStatus() {
         String pageNumber = String.format("%d/%d", imageBoardModel.getIndex() + 1, imageBoardModel.getMaxImage());
-        String name = String.format("%s %s", imageBoardModel.getFile().getName(), imageBoardModel.getDescription());
+        String name = String.format("%s %s", imageBoardModel.getFileWatcher().getFile().getName(), imageBoardModel.getDescription());
         String zoom = String.format("[%d%%]", (int) (imageBoardModel.getZoom() * 100));
         String coordinate = String.format("%s %s", imageBoardModel.getX(), imageBoardModel.getY());
         String padding = "   ";

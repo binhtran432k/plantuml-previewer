@@ -5,6 +5,7 @@ import java.awt.Point;
 import com.github.binhtran432k.plantumlpreviewer.cli.Option;
 import com.github.binhtran432k.plantumlpreviewer.core.PlantUmlImage;
 import com.github.binhtran432k.plantumlpreviewer.core.PlantUmlLoader;
+import com.github.binhtran432k.plantumlpreviewer.gui.FileWatcher;
 import com.github.binhtran432k.plantumlpreviewer.gui.model.ImageBoardModel;
 import com.github.binhtran432k.plantumlpreviewer.gui.model.ZoomAction;
 
@@ -24,6 +25,14 @@ public class ImageBoardController {
     private final StatusBarController statusBarController;
 
     private Point cachedHoldPoint;
+
+    public void reloadImageFromFileOnChanged() {
+        FileWatcher fileWatcher = imageBoardModel.getFileWatcher();
+        if (fileWatcher.hasChanged()) {
+            updateImage(false);
+            fileWatcher.refreshModified();
+        }
+    }
 
     public void reloadImageFromFile() {
         updateImage(false);
@@ -162,7 +171,7 @@ public class ImageBoardController {
             return plantUmlLoader.getImageFromBuffer(imageBoardModel.getIndex(), imageBoardModel.getPlantUmlFormat());
         }
 
-        return plantUmlLoader.getImageFromFile(imageBoardModel.getFile(),
+        return plantUmlLoader.getImageFromFile(imageBoardModel.getFileWatcher().getFile(),
                 imageBoardModel.getIndex(), imageBoardModel.getPlantUmlFormat());
     }
 
