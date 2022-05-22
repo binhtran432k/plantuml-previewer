@@ -134,7 +134,7 @@ public class ImageBoardView implements IViewSubcriber {
         double newZoom = foldZoom;
         ZoomAction action = imageBoardModel.getZoomAction();
         boolean isZoomIn = newZoom > 1;
-        boolean moveCenter = true;
+        boolean moveCenter = false;
 
         if (action == ZoomAction.BEST_FIT) {
             newZoom = ImageHelperPlus.getBestFitZoom(image.getWidth(), image.getHeight(), imageBoard.getWidth(),
@@ -180,15 +180,17 @@ public class ImageBoardView implements IViewSubcriber {
             final ImageIcon icon = new ImageIcon(image);
             imageWrapper.setIcon(icon);
 
-            if (!isIconExist) {
-                SwingUtilities.invokeLater(() -> {
+            // For passing to runable
+            final double finalFoldZoom = foldZoom;
+            final boolean finalNeedMoveCenter = !isIconExist || moveCenter;
+
+            SwingUtilities.invokeLater(() -> {
+                if (finalNeedMoveCenter) {
                     moveScrollBarCenter();
-                });
-            } else if (moveCenter) {
-                moveScrollBarCenter();
-            } else {
-                moveScrollBarCenterOfZoom(foldZoom);
-            }
+                } else {
+                    moveScrollBarCenterOfZoom(finalFoldZoom);
+                }
+            });
 
             imageBoardModel.setFoldZoom(1);
         }
@@ -216,10 +218,6 @@ public class ImageBoardView implements IViewSubcriber {
         if (imageSession != null) {
             SwingUtilities.invokeLater(() -> {
                 updateModelCoordinate(imageSession.getX(), imageSession.getY());
-            });
-        } else {
-            SwingUtilities.invokeLater(() -> {
-                moveScrollBarCenter();
             });
         }
     }
@@ -261,7 +259,6 @@ public class ImageBoardView implements IViewSubcriber {
         JScrollBar hScrollBar = imageBoard.getHorizontalScrollBar();
         JScrollBar vScrollBar = imageBoard.getVerticalScrollBar();
 
-        imageBoard.repaint();
         hScrollBar.setValue(x);
         vScrollBar.setValue(y);
         int newX = hScrollBar.getValue();
