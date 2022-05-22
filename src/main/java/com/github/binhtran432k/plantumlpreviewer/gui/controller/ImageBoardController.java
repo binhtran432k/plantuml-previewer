@@ -91,19 +91,19 @@ public class ImageBoardController {
     }
 
     public void scrollImageLeft(int speedUpFactor) {
-        imageBoardModel.setDiffCoordinateWithNotify(speedUpFactor * Option.INCREMENT_UNIT, 0);
+        imageBoardModel.setDiffCoordinateWithNotify(speedUpFactor * -Option.INCREMENT_UNIT, 0);
     }
 
     public void scrollImageRight(int speedUpFactor) {
-        imageBoardModel.setDiffCoordinateWithNotify(-speedUpFactor * Option.INCREMENT_UNIT, 0);
+        imageBoardModel.setDiffCoordinateWithNotify(speedUpFactor * Option.INCREMENT_UNIT, 0);
     }
 
     public void scrollImageUp(int speedUpFactor) {
-        imageBoardModel.setDiffCoordinateWithNotify(0, speedUpFactor * Option.INCREMENT_UNIT);
+        imageBoardModel.setDiffCoordinateWithNotify(0, speedUpFactor * -Option.INCREMENT_UNIT);
     }
 
     public void scrollImageDown(int speedUpFactor) {
-        imageBoardModel.setDiffCoordinateWithNotify(0, -speedUpFactor * Option.INCREMENT_UNIT);
+        imageBoardModel.setDiffCoordinateWithNotify(0, speedUpFactor * Option.INCREMENT_UNIT);
     }
 
     public void scrollImageTop() {
@@ -132,6 +132,7 @@ public class ImageBoardController {
             return;
         }
         imageBoardModel.setIndex(nextIndex);
+        imageBoardModel.setZoomAction(ZoomAction.CACHED);
         updateImage(true);
     }
 
@@ -141,6 +142,7 @@ public class ImageBoardController {
             return;
         }
         imageBoardModel.setIndex(prevIndex);
+        imageBoardModel.setZoomAction(ZoomAction.CACHED);
         updateImage(true);
     }
 
