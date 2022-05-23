@@ -54,8 +54,15 @@ public class PlantUmlLoader {
                 index = maxImage - 1;
             }
 
-            String description = reader.outputImage(png, index,
-                    getFileFormatOption(format)).toString();
+            String description = null;
+            try {
+                description = reader.outputImage(png, index,
+                        getFileFormatOption(format)).toString();
+            } catch (NoSuchMethodError e) {
+                // fallback to deprecated method
+                description = reader.generateImage(png, index,
+                        getFileFormatOption(format));
+            }
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(png.toByteArray()));
 
             PlantUmlImage plantUMLImage = new PlantUmlImage(index, maxImage, description, image);
@@ -66,8 +73,12 @@ public class PlantUmlLoader {
         } catch (IOException | NullPointerException e) {
             cachedImages.clear();
 
-            return null;
+            return getEmptyImage();
         }
+    }
+
+    private PlantUmlImage getEmptyImage() {
+        return new PlantUmlImage(0, 0, "", null);
     }
 
     private int calNumOfImages(SourceStringReader reader) {

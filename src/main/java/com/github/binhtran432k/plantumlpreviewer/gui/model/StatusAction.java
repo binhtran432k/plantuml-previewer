@@ -13,4 +13,5 @@ public enum StatusAction {
     INITIALIZING,
     OPENING,
     ZOOMING,
+    NO_PLANTUML,
 }

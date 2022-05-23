@@ -75,6 +75,8 @@ public class StatusBarView implements IViewSubcriber {
             status = "Opening...";
         } else if (statusAction == StatusAction.ZOOMING) {
             status = "Zooming...";
+        } else if (statusAction == StatusAction.NO_PLANTUML) {
+            status = "There is no PlantUML to process";
         } else if (statusAction == StatusAction.PREVIEWING) {
             status = generateImageStatus();
         }

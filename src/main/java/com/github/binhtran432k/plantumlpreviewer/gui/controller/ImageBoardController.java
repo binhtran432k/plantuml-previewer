@@ -151,21 +151,23 @@ public class ImageBoardController {
             if (imageBoardModel.getZoomAction() == ZoomAction.ZOOMABLE) {
                 imageBoardModel.setZoomAction(ZoomAction.UNKOWN);
             }
-            PlantUmlImage plantUmlImage = getPlantUmlImage(isBuffer);
 
-            if (plantUmlImage != null) {
-                imageBoardModel.setIndex(plantUmlImage.getIndex());
-                imageBoardModel.setMaxImage(plantUmlImage.getMaxImage());
-                imageBoardModel.setDescription(plantUmlImage.getDescription());
-                imageBoardModel.setImageAndNotify(plantUmlImage.getImage());
-            } else {
-                imageBoardModel.setIndex(0);
-                imageBoardModel.setMaxImage(0);
-                imageBoardModel.setDescription("");
-                imageBoardModel.setImageAndNotify(null);
+            PlantUmlImage plantUmlImage = null;
+            try {
+                plantUmlImage = getPlantUmlImage(isBuffer);
+            } catch (NoClassDefFoundError e) {
+                System.out.println("No PlantUML");
+            } finally {
+                if (plantUmlImage != null) {
+                    imageBoardModel.setIndex(plantUmlImage.getIndex());
+                    imageBoardModel.setMaxImage(plantUmlImage.getMaxImage());
+                    imageBoardModel.setDescription(plantUmlImage.getDescription());
+                    imageBoardModel.setImageAndNotify(plantUmlImage.getImage());
+                    statusBarController.setPreviewImageStatus();
+                } else {
+                    statusBarController.setNoPlantUmlStatus();
+                }
             }
-
-            statusBarController.setPreviewImageStatus();
         }).start();
     }
 
@@ -177,7 +179,8 @@ public class ImageBoardController {
 
     private PlantUmlImage getPlantUmlImage(boolean isBuffer) {
         if (isBuffer) {
-            return plantUmlLoader.getImageFromBuffer(imageBoardModel.getIndex(), imageBoardModel.getPlantUmlFormat());
+            return plantUmlLoader.getImageFromBuffer(imageBoardModel.getIndex(),
+                    imageBoardModel.getPlantUmlFormat());
         }
 
         return plantUmlLoader.getImageFromFile(imageBoardModel.getFileWatcher().getFile(),

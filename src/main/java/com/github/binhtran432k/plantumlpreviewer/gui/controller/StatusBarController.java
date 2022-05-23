@@ -25,6 +25,10 @@ public class StatusBarController {
         statusBarModel.setStatusActionAndNotify(StatusAction.PREVIEWING);
     }
 
+    public void setNoPlantUmlStatus() {
+        statusBarModel.setStatusActionAndNotify(StatusAction.NO_PLANTUML);
+    }
+
     public void setOpeningStatus() {
         statusBarModel.setStatusActionAndNotify(StatusAction.OPENING);
     }
