@@ -1,13 +1,12 @@
 package com.github.binhtran432k.plantumlpreviewer.gui.view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.io.File;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import com.github.binhtran432k.plantumlpreviewer.cli.Option;
 import com.github.binhtran432k.plantumlpreviewer.gui.helper.StringHelper;
 import com.github.binhtran432k.plantumlpreviewer.gui.model.ImageBoardModel;
 import com.github.binhtran432k.plantumlpreviewer.gui.model.StatusAction;
@@ -42,7 +41,7 @@ public class StatusBarView implements IViewSubcriber {
 
     private JPanel initStatusBar(SmoothLabel label) {
         JPanel statusBar = new JPanel();
-        statusBar.setBackground(new Color(Option.SECONDARY_COLOR));
+        statusBar.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, statusBar.getForeground()));
         statusBar.setLayout(new BorderLayout());
         statusBar.add(label);
 

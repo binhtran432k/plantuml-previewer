@@ -1,6 +1,5 @@
 package com.github.binhtran432k.plantumlpreviewer.gui.view;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -13,7 +12,6 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import com.github.binhtran432k.plantumlpreviewer.cli.Option;
 import com.github.binhtran432k.plantumlpreviewer.gui.helper.ImageHelper;
 import com.github.binhtran432k.plantumlpreviewer.gui.listener.ImageBoardListener;
 import com.github.binhtran432k.plantumlpreviewer.gui.model.ImageBoardModel;
@@ -87,7 +85,6 @@ public class ImageBoardView implements IViewSubcriber {
         panel.setAutoscrolls(true);
         panel.setBorder(null);
 
-        imageWrapper.setBackground(new Color(Option.PRIMARY_COLOR));
         panel.setViewportView(imageWrapper);
 
         // Remove all defalt mouse wheel

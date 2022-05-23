@@ -42,7 +42,18 @@ public class GuiManager {
     private void initialize(Option option) {
         SwingUtilities.invokeLater(() -> {
             try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                // Try using GTK by default
+                boolean setGtkThemeFlag = false;
+                for (UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                    if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {
+                        UIManager.setLookAndFeel(info.getClassName());
+                        setGtkThemeFlag = true;
+                        break;
+                    }
+                }
+                if (!setGtkThemeFlag) {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                }
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
                     | UnsupportedLookAndFeelException ex) {
                 ex.printStackTrace();

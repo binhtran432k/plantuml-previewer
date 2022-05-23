@@ -1,6 +1,5 @@
 package com.github.binhtran432k.plantumlpreviewer.gui.view;
 
-import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JMenuBar;
@@ -44,7 +43,6 @@ public class MenuBarView implements IViewSubcriber {
 
     private SmoothMenuBar initMenuBar(MenuBarListener listener) {
         SmoothMenuBar menuBar = new SmoothMenuBar();
-        menuBar.setBackground(new Color(0xe5e5e5));
 
         menuBar.add(initFileMenu(listener));
         menuBar.add(initViewMenu(listener));
