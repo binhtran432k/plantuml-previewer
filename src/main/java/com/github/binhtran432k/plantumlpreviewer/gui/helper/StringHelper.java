@@ -6,6 +6,14 @@ package com.github.binhtran432k.plantumlpreviewer.gui.helper;
  */
 public class StringHelper {
 
+    public static String repeat(String s, int count) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < count; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
+
     public static String unicodeForHtml(String s) {
         final StringBuilder result = new StringBuilder();
         for (char c : s.toCharArray())

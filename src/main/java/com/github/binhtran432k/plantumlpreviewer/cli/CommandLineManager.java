@@ -1,6 +1,7 @@
 package com.github.binhtran432k.plantumlpreviewer.cli;
 
 import com.github.binhtran432k.plantumlpreviewer.gui.GuiManager;
+import com.github.binhtran432k.plantumlpreviewer.gui.helper.StringHelper;
 
 /**
  * Command line manager of application
@@ -48,7 +49,7 @@ public class CommandLineManager {
             return str;
         }
 
-        return String.format("%s%s", str, " ".repeat(padding));
+        return String.format("%s%s", str, StringHelper.repeat(" ", padding));
     }
 
     private void runPlantumlGui() {

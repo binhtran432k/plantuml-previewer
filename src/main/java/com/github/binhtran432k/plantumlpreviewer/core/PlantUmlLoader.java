@@ -30,7 +30,7 @@ public class PlantUmlLoader {
         cachedImages.clear();
 
         try {
-            String source = Files.readString(file.toPath());
+            String source = new String(Files.readAllBytes(file.toPath()));
             reader = new SourceStringReader(source);
         } catch (IOException | NullPointerException e) {
             reader = null;
