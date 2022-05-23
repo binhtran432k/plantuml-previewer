@@ -9,9 +9,9 @@
 - [x] Image zoom
 - [x] Image manipulation
 - [x] Keybindings
-- [ ] Keybindings Help
+- [x] Keybindings Help
 - [ ] About
-- [ ] Open File Feature
+- [x] Open File Feature
 - [ ] Export File Feature
 - [ ] PlantUML server support
 - [ ] External PlantUML source support
