@@ -11,4 +11,5 @@ public enum SubcribeAction {
     CLEAR_IMAGE_SESSION_CACHE,
     DIFF_COORDINATE,
     IMAGE,
+    CHANGE_STATE,
 }

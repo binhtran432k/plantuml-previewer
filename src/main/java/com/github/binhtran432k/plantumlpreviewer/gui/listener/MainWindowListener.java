@@ -56,6 +56,8 @@ public class MainWindowListener implements KeyListener, ComponentListener {
             applicationController.doAction(ApplicationAction.ZOOM_WIDTH_FIT);
         } else if (e.getKeyCode() == KeyEvent.VK_Q) {
             applicationController.doAction(ApplicationAction.QUIT);
+        } else if (e.getKeyCode() == KeyEvent.VK_O) {
+            applicationController.doAction(ApplicationAction.OPEN_FILE);
         } else if (e.getKeyCode() == KeyEvent.VK_R) {
             applicationController.doAction(ApplicationAction.RELOAD_IMAGE);
         } else if (e.getKeyCode() == KeyEvent.VK_H || e.getKeyCode() == KeyEvent.VK_LEFT) {

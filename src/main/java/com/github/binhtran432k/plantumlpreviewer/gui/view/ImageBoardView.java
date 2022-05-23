@@ -80,7 +80,7 @@ public class ImageBoardView implements IViewSubcriber {
         } else if (action == SubcribeAction.CLEAR_IMAGE_SESSION_CACHE) {
             cachedImageSessions.clear();
         } else if (action == SubcribeAction.IMAGE || action == SubcribeAction.ZOOM) {
-            loadImage();
+            loadView();
         }
     }
 
@@ -123,77 +123,76 @@ public class ImageBoardView implements IViewSubcriber {
         }
     }
 
-    private void loadImage() {
+    private void loadView() {
         BufferedImage image = imageBoardModel.getImage();
         if (image == null) {
+            imageWrapper.setIcon(null);
             return;
         }
 
         double zoom = imageBoardModel.getZoom();
         double foldZoom = imageBoardModel.getFoldZoom();
-        double newZoom = foldZoom;
-        ZoomAction action = imageBoardModel.getZoomAction();
-        boolean isZoomIn = newZoom > 1;
-        boolean moveCenter = false;
+        double newZoom = zoom * foldZoom;
+        final ZoomAction action = imageBoardModel.getZoomAction();
+        boolean isZoomIn = foldZoom > 1;
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+        final double minZoom = Math.min(1, Option.MIN_PIXEL / (double) Math.min(width, height));
+        final double maxZoom = Math.max(1, Option.MAX_PIXEL / (double) Math.max(width, height));
 
         if (action == ZoomAction.BEST_FIT) {
-            newZoom = ImageHelperPlus.getBestFitZoom(image.getWidth(), image.getHeight(), imageBoard.getWidth(),
+            newZoom = ImageHelperPlus.getBestFitZoom(image.getWidth(), image.getHeight(),
+                    imageBoard.getWidth(),
                     imageBoard.getHeight());
         } else if (action == ZoomAction.WIDTH_FIT) {
             newZoom = ImageHelperPlus.getWidthFitZoom(image.getWidth(), imageBoard.getWidth());
         } else if (action == ZoomAction.IMAGE_SIZE) {
             newZoom = 1;
         } else if (action == ZoomAction.ZOOMABLE) {
-            if (zoom < 2.5) {
-                newZoom = zoom * newZoom;
-                if (isZoomIn) {
-                    int width = imageBoardModel.getZoomedImage().getWidth();
-                    int newWidth = (int) (newZoom * image.getWidth());
-                    while (newWidth <= width) {
-                        newZoom += Option.MIN_ZOOM;
-                        newWidth = (int) (newZoom * image.getWidth());
-                    }
+            if (isZoomIn) {
+                int zoomedWidth = imageBoardModel.getZoomedImage().getWidth();
+                int newWidth = (int) (newZoom * width);
+                if (newWidth <= zoomedWidth) {
+                    newZoom = (zoomedWidth + 1.1) / (double) width;
                 }
-            } else if (newZoom * zoom >= Option.MAX_ZOOM) {
-                newZoom = Option.MAX_ZOOM;
-                foldZoom = newZoom / zoom;
-            } else {
-                image = imageBoardModel.getZoomedImage();
             }
-
-            moveCenter = newZoom * image.getWidth() <= imageBoard.getWidth();
         }
 
-        if (image != null) {
-            if (action == ZoomAction.CACHED) {
-                loadImageFromCached(image);
-                return;
-            }
+        final ImageSession imageSession = cachedImageSessions.get(imageBoardModel.getIndex());
 
-            newZoom = Math.max(Option.MIN_ZOOM, Math.min(Option.MAX_ZOOM, newZoom));
+        if (action == ZoomAction.UNKOWN && imageSession != null) {
+            newZoom = imageSession.getZoom();
+        }
 
-            image = ImageHelperPlus.getScaledImage(image, newZoom);
-            imageBoardModel.setZoomedImage(image);
+        newZoom = Math.max(minZoom, Math.min(maxZoom, newZoom));
+        foldZoom = Math.round(newZoom * 100 / zoom) / (double) 100;
 
-            boolean isIconExist = imageWrapper.getIcon() != null;
+        image = ImageHelperPlus.getScaledImage(image, newZoom);
+        loadImage(image, imageSession, action, foldZoom, newZoom);
+    }
 
-            final ImageIcon icon = new ImageIcon(image);
-            imageWrapper.setIcon(icon);
+    private void loadImage(final BufferedImage image, final ImageSession imageSession, final ZoomAction action,
+            final double foldZoom, final double newZoom) {
+        imageBoardModel.setZoomedImage(image);
+        final ImageIcon icon = new ImageIcon(image);
 
-            // For passing to runable
-            final double finalFoldZoom = foldZoom;
-            final boolean finalNeedMoveCenter = !isIconExist || moveCenter;
+        imageWrapper.setIcon(icon);
+        imageBoard.repaint();
 
+        if (action == ZoomAction.UNKOWN) {
             SwingUtilities.invokeLater(() -> {
-                if (finalNeedMoveCenter) {
-                    moveScrollBarCenter();
+                if (imageSession != null) {
+                    updateModelCoordinate(imageSession.getX(), imageSession.getY());
                 } else {
-                    moveScrollBarCenterOfZoom(finalFoldZoom);
+                    moveScrollBarCenter();
                 }
             });
-
-            imageBoardModel.setFoldZoom(1);
+        } else {
+            moveScrollBarCenterOfZoom(foldZoom);
         }
+
+        imageBoardModel.setFoldZoom(1);
     }
 
     private void updateScrollBarVisible() {
@@ -201,25 +200,6 @@ public class ImageBoardView implements IViewSubcriber {
         reloadScrollBarInstance(imageBoard.getHorizontalScrollBar(), isViewScrollBar);
         reloadScrollBarInstance(imageBoard.getVerticalScrollBar(), isViewScrollBar);
         imageBoard.revalidate();
-    }
-
-    private void loadImageFromCached(BufferedImage image) {
-        ImageSession imageSession = cachedImageSessions.get(imageBoardModel.getIndex());
-
-        if (imageSession != null) {
-            image = ImageHelperPlus.getScaledImage(image, imageSession.getZoom());
-        }
-
-        imageBoardModel.setZoomedImage(image);
-
-        final ImageIcon icon = new ImageIcon(image);
-        imageWrapper.setIcon(icon);
-
-        if (imageSession != null) {
-            SwingUtilities.invokeLater(() -> {
-                updateModelCoordinate(imageSession.getX(), imageSession.getY());
-            });
-        }
     }
 
     private void moveScrollBarByDiff() {

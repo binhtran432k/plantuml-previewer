@@ -60,10 +60,19 @@ public class MenuBarView implements IViewSubcriber {
     private SmoothMenu initFileMenu(MenuBarListener listener) {
         SmoothMenu menu = new SmoothMenu("File");
 
+        SmoothMenuItem openMenuItem = new SmoothMenuItem("Open (o)");
+        openMenuItem.setMnemonic(KeyEvent.VK_O);
+        openMenuItem.setActionCommand(ApplicationAction.OPEN_FILE.toString());
+        openMenuItem.addActionListener(listener);
+
         SmoothMenuItem quitMenuItem = new SmoothMenuItem("Quit (q)");
         quitMenuItem.setMnemonic(KeyEvent.VK_Q);
         quitMenuItem.setActionCommand(ApplicationAction.QUIT.toString());
         quitMenuItem.addActionListener(listener);
+
+        menu.add(openMenuItem);
+
+        menu.addSeparator();
 
         menu.add(quitMenuItem);
 

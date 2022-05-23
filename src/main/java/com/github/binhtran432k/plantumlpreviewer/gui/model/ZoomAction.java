@@ -1,7 +1,7 @@
 package com.github.binhtran432k.plantumlpreviewer.gui.model;
 
 public enum ZoomAction {
-    CACHED,
+    UNKOWN,
     BEST_FIT,
     WIDTH_FIT,
     ZOOMABLE,

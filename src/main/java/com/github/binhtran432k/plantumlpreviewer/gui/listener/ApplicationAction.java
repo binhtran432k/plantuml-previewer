@@ -32,4 +32,5 @@ public enum ApplicationAction {
     MOVE_BEGIN,
     REFRESH_ZOOM,
     RELOAD_IMAGE,
+    OPEN_FILE,
 }

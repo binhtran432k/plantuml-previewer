@@ -59,7 +59,7 @@ public class GuiManager {
             ImageBoardController imageBoardController = new ImageBoardController(imageBoardModel, statusBarController);
             MenuBarController menuBarController = new MenuBarController(menuBarModel);
             ApplicationController applicationController = new ApplicationController(windowController,
-                    imageBoardController, menuBarController);
+                    imageBoardController, menuBarController, statusBarController);
 
             // View listener
             ImageBoardListener listener = new ImageBoardListener(imageBoardController);
@@ -68,7 +68,8 @@ public class GuiManager {
 
             // View
             MenuBarView menuBarView = new MenuBarView(menuBarModel, menuBarListener);
-            MainWindowView mainWindowView = new MainWindowView(menuBarView, mainWindowListener);
+            MainWindowView mainWindowView = new MainWindowView(menuBarView, imageBoardModel, statusBarModel,
+                    mainWindowListener);
 
             ImageBoardView imageBoardView = new ImageBoardView(imageBoardModel, listener);
             StatusBarView statusBarView = new StatusBarView(statusBarModel, imageBoardModel);
@@ -76,6 +77,8 @@ public class GuiManager {
             mainWindowView.setPrincipleView(previewPrincipalView);
 
             watchFileChange(imageBoardController, option);
+            mainWindowView.changeFile(option.getFile());
+            imageBoardController.reloadImageFromFile();
 
             // Notify First time
             menuBarModel.notifyAllSubcribers();
