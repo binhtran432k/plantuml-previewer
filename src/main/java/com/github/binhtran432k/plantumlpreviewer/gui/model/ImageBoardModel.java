@@ -69,6 +69,7 @@ public class ImageBoardModel extends ModelPublisher {
     }
 
     public void setFileAndResetAndNotify(File file) {
+        setIndex(0);
         this.fileWatcher.setFileAndReset(file);
         notifySubcribers(SubcribeAction.CLEAR_IMAGE_SESSION_CACHE);
         notifySubcribers(SubcribeAction.STATUS_BAR);

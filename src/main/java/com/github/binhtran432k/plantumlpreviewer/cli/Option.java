@@ -22,8 +22,8 @@ import lombok.Setter;
 public class Option {
 
     public static final double FOLD_ZOOM_IN = 1.1;
-    public static final double MAX_ZOOM = 10;
-    public static final double MIN_ZOOM = 0.1;
+    public static final int MAX_PIXEL = 1900;
+    public static final int MIN_PIXEL = 1;
     public static final int BORDER_SIZE = 0;
     public static final int FAST_SPEED_FACTOR = 5;
     public static final int INCREMENT_UNIT = 30;

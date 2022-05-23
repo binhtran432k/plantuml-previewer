@@ -66,17 +66,11 @@ public class ImageBoardController {
     }
 
     public void zoomImageIn() {
-        if (imageBoardModel.getZoom() >= Option.MAX_ZOOM) {
-            return;
-        }
         imageBoardModel.setFoldZoom(Option.FOLD_ZOOM_IN);
         updateZoom(ZoomAction.ZOOMABLE);
     }
 
     public void zoomImageOut() {
-        if (imageBoardModel.getZoom() <= Option.MIN_ZOOM) {
-            return;
-        }
         imageBoardModel.setFoldZoom(1 / Option.FOLD_ZOOM_IN);
         updateZoom(ZoomAction.ZOOMABLE);
     }
