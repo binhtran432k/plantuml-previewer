@@ -22,7 +22,7 @@ import lombok.Setter;
 @Setter
 public class ImageBoardModel extends ModelPublisher {
 
-    private final FileWatcher fileWatcher;
+    private final FileWatcher fileWatcher = new FileWatcher();
     private boolean isImageMoving;
     private boolean isViewScrollBar;
     private ZoomAction zoomAction;
@@ -30,19 +30,17 @@ public class ImageBoardModel extends ModelPublisher {
     private int maxImage = 0;
     private BufferedImage image;
     private String description = "";
-    private BufferedImage zoomedImage;
     private PlantUmlFormat plantUmlFormat;
+    private double scale = 1;
     private int x = 50;
     private int y = 50;
     private int diffX = 0;
     private int diffY = 0;
-    private double foldZoom = 1;
+    private double foldScale = 1;
 
     public ImageBoardModel(Option option) {
         this.index = option.getIndex();
         this.isViewScrollBar = option.isViewScrollBar();
-        this.foldZoom = option.getZoom();
-        this.fileWatcher = new FileWatcher();
         this.zoomAction = option.getZoomAction();
     }
 
@@ -62,9 +60,8 @@ public class ImageBoardModel extends ModelPublisher {
         notifySubcribers(SubcribeAction.ZOOM);
     }
 
-    public void setImagesAndNotify(BufferedImage image) {
+    public void setImageAndNotify(BufferedImage image) {
         setImage(image);
-        setZoomedImage(image);
         notifySubcribers(SubcribeAction.IMAGE);
     }
 
@@ -89,13 +86,6 @@ public class ImageBoardModel extends ModelPublisher {
         setX(x);
         setY(y);
         notifySubcribers(SubcribeAction.STATUS_BAR);
-    }
-
-    public double getZoom() {
-        if (zoomedImage == null || image == null) {
-            return 1;
-        }
-        return zoomedImage.getWidth() / (double) image.getWidth();
     }
 
 }

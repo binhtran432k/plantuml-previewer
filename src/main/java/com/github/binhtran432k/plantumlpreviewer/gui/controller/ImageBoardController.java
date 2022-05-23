@@ -66,12 +66,12 @@ public class ImageBoardController {
     }
 
     public void zoomImageIn() {
-        imageBoardModel.setFoldZoom(Option.FOLD_ZOOM_IN);
+        imageBoardModel.setFoldScale(Option.FOLD_ZOOM_IN);
         updateZoom(ZoomAction.ZOOMABLE);
     }
 
     public void zoomImageOut() {
-        imageBoardModel.setFoldZoom(1 / Option.FOLD_ZOOM_IN);
+        imageBoardModel.setFoldScale(1 / Option.FOLD_ZOOM_IN);
         updateZoom(ZoomAction.ZOOMABLE);
     }
 
@@ -157,12 +157,12 @@ public class ImageBoardController {
                 imageBoardModel.setIndex(plantUmlImage.getIndex());
                 imageBoardModel.setMaxImage(plantUmlImage.getMaxImage());
                 imageBoardModel.setDescription(plantUmlImage.getDescription());
-                imageBoardModel.setImagesAndNotify(plantUmlImage.getImage());
+                imageBoardModel.setImageAndNotify(plantUmlImage.getImage());
             } else {
                 imageBoardModel.setIndex(0);
                 imageBoardModel.setMaxImage(0);
                 imageBoardModel.setDescription("");
-                imageBoardModel.setImagesAndNotify(null);
+                imageBoardModel.setImageAndNotify(null);
             }
 
             statusBarController.setPreviewImageStatus();

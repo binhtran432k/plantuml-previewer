@@ -32,7 +32,6 @@ public class Option {
 
     private boolean isViewMenuBar = true;
     private boolean isViewScrollBar = false;
-    private double zoom = 1;
     private int index = 0;
     private int nbThread = 1;
     private int period = 300;
